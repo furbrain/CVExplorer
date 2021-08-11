@@ -1,0 +1,48 @@
+import cv2
+import wx
+
+from datatypes import ImageData
+from functions import Function
+from . import basegui
+from .pane import FunctionPane
+
+
+class CVEFrame(basegui.CVEFrame):
+    def load_image(self, event):
+        # first get our pathname...
+        with wx.FileDialog(self,
+                           "Open Image file",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fd:
+            if fd.ShowModal() != wx.ID_OK:
+                return
+            path = fd.GetPath()
+            pane = FunctionPane(self.notebook_1)
+            params = {"Filename": (wx.TextCtrl, path)}
+            results = [ImageData("Image", pane.get_results_sizer())]
+            func = Function("Load image", cv2.imread, params, results)
+            func.create_params(pane.param_sizer)
+            self.notebook_1.AddPage(pane, "image", True)
+            func.call()
+            pane.set_display(func.results[0].display())
+        # self.Fit()
+        self.Layout()
+        self.Refresh()
+
+    def exit(self, event):
+        self.Close()
+
+
+class CVExplorer(wx.App):
+    def OnInit(self):
+        # noinspection PyAttributeOutsideInit
+        self.frame = CVEFrame(None, wx.ID_ANY, "")
+        self.SetTopWindow(self.frame)
+        self.frame.Show()
+        return True
+
+    # end of class MyApp
+
+
+if __name__ == "__main__":
+    app = CVExplorer(0)
+    app.MainLoop()

@@ -47,6 +47,7 @@ master_doc = 'index'
 project = 'Python-Project-Skeleton'
 year = '2020'
 author = 'Joao MC Teixeira'
+# noinspection PyShadowingBuiltins
 copyright = '{0}, {1}'.format(year, author)
 version = release = '0.8.0'
 

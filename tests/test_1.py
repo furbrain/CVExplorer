@@ -1,6 +1,6 @@
 """Performs general tests."""
 import amodule
-from sampleproject.libs import samplemodule as SM
+from sampleproject.libs import samplemodule as sm
 
 
 def test_amodule():
@@ -15,10 +15,10 @@ def test_true():
 
 def test_sampleclass():
     """Test samplemodule SampleClass true method."""
-    s = SM.SampleClass()
+    s = sm.SampleClass()
     assert s.true() is True
 
 
 def test_sampleclass_false():
     """Test samplemodule SampleClass false classmethod."""
-    assert SM.SampleClass.false() is False
+    assert sm.SampleClass.false() is False
