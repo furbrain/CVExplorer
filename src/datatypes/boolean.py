@@ -1,7 +1,5 @@
 from typing import Optional, TYPE_CHECKING
 
-import wx
-
 from .base import BaseData
 
 if TYPE_CHECKING:

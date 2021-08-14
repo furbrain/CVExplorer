@@ -1,12 +1,26 @@
+from typing import Callable, Optional
+
 import wx
 
 from datatypes.base import ParamsTemplate, ParamsInstance
 
+EVENTS = [
+    wx.EVT_BUTTON,
+    wx.EVT_SLIDER,
+    wx.EVT_CHECKBOX,
+    wx.EVT_COMBOBOX,
+    wx.EVT_FILEPICKER_CHANGED,
+    wx.EVT_TEXT,
+    wx.EVT_SPINCTRL
+]
 
+
+# noinspection PyUnusedLocal
 class FunctionPane(wx.Panel):
     def __init__(self, nb: wx.Notebook):
         super().__init__(nb)
         self.display = None
+        self.change_handler: Optional[Callable] = None
         self.display_pane = wx.ScrolledWindow(self, style=wx.TAB_TRAVERSAL)
         self.params_pane = wx.ScrolledWindow(self, style=wx.TAB_TRAVERSAL)
         self.params_pane.SetMinSize((300, -1))
@@ -14,7 +28,7 @@ class FunctionPane(wx.Panel):
         self.params_pane.SetScrollRate(10, 10)
 
         sizer_1 = wx.BoxSizer(wx.HORIZONTAL)  # top level
-        sizer_3 = wx.BoxSizer(wx.VERTICAL)  # just to hold the bitmappy jobby
+        sizer_3 = wx.BoxSizer(wx.VERTICAL)  # just to hold the bitmap jobby
         self.bitmap = wx.StaticBitmap(self.display_pane)
         sizer_1.Add(self.display_pane, 1, wx.ALL | wx.EXPAND, 3)
         sizer_1.Add(wx.StaticLine(self, style=wx.LI_VERTICAL), 0, wx.ALL | wx.EXPAND, 3)
@@ -28,9 +42,11 @@ class FunctionPane(wx.Panel):
         self.SetSizer(sizer_1)
         self.display_pane.SetSizer(sizer_3)
         self.params_pane.SetSizer(self.params_sizer)
+        for evt in EVENTS:
+            self.Bind(evt, self.on_change)
 
     def instantiate_params(self, params: ParamsTemplate) -> ParamsInstance:
-        return {name: ctrl(self.params_pane, wx.ID_ANY, *args) for name, (ctrl, args) in params.items()}
+        return {name: ctrl(self.params_pane, wx.ID_ANY, **args) for name, (ctrl, args) in params.items()}
 
     def add_param_controls_to_sizer(self, controls: ParamsInstance, sizer: wx.FlexGridSizer):
         for name, control in controls.items():
@@ -43,7 +59,7 @@ class FunctionPane(wx.Panel):
         return controls
 
     def add_output_params(self, name: str, params: ParamsTemplate) -> ParamsInstance:
-        sizer = wx.FlexGridSizer(2,0,3)
+        sizer = wx.FlexGridSizer(2, 0, 3)
         controls = self.instantiate_params(params)
         self.add_param_controls_to_sizer(controls, sizer)
         sizer.AddGrowableCol(1)
@@ -57,3 +73,10 @@ class FunctionPane(wx.Panel):
             self.bitmap.SetVirtualSize(results.GetSize())
             self.bitmap.SetBitmap(results)
             self.bitmap.Refresh()
+
+    def register_change_handler(self, func: Callable):
+        self.change_handler = func
+
+    def on_change(self, event):
+        if self.change_handler:
+            self.change_handler()

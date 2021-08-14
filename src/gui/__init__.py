@@ -1,1 +1,1 @@
-# test
+from .pane import FunctionPane

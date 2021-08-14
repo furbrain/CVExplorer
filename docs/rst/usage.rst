@@ -7,3 +7,4 @@ Usage
 To use ``SampleProject``::
 
 	import sampleproject
+

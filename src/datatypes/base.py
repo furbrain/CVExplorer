@@ -1,4 +1,4 @@
-from typing import Union, Dict, Tuple, Type, Any, List
+from typing import Union, Dict, Tuple, Type, Any, Protocol
 
 import numpy as np
 import wx
@@ -8,8 +8,19 @@ class BaseParameter:
     pass
 
 
-ParamsTemplate = Dict[str, Tuple[Type[wx.Control], Tuple]]
-ParamsInstance = Dict[str, wx.Control]
+# noinspection PyPep8Naming
+class SupportsGetValue(Protocol):
+    def GetValue(self) -> Any:
+        ...
+
+    def Command(self, event: wx.CommandEvent) -> None:
+        ...
+
+
+Control = Union[wx.Control, SupportsGetValue]
+
+ParamsTemplate = Dict[str, Tuple[Type[Control], Dict[str, Any]]]
+ParamsInstance = Dict[str, Control]
 
 
 class BaseData:

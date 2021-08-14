@@ -17,7 +17,7 @@ jobs:
 
     - uses: actions/checkout@v2
       with:
-        # I setup a new token for my GitHub user and added that token
+        # I set up a new token for my GitHub user and added that token
         # to the secrets in the repository
         # When I tried
         # https://docs.github.com/en/actions/reference/authentication-in-a-workflow
