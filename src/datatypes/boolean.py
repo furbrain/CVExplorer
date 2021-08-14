@@ -10,11 +10,10 @@ if TYPE_CHECKING:
 
 class BooleanData(BaseData):
     PARAMS = {
-        "Brightness": (wx.Slider, 0, -100, 100)
     }
 
-    def __init__(self, name: str, sizer: wx.GridSizer):
-        super().__init__(name, sizer)
+    def __init__(self, name: str):
+        super().__init__(name)
         self.data: Optional[bool] = None
 
     def display(self) -> bool:

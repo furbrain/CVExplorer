@@ -2,6 +2,7 @@ import cv2
 import wx
 
 from datatypes import ImageData
+from datatypes.base import ParamsTemplate
 from functions import Function
 from . import basegui
 from .pane import FunctionPane
@@ -17,13 +18,14 @@ class CVEFrame(basegui.CVEFrame):
                 return
             path = fd.GetPath()
             pane = FunctionPane(self.notebook_1)
-            params = {"Filename": (wx.TextCtrl, path)}
-            results = [ImageData("Image", pane.get_results_sizer())]
+            params: ParamsTemplate = {"Filename": (wx.TextCtrl, (path,))}
+            results = [ImageData("Image")]
             func = Function("Load image", cv2.imread, params, results)
-            func.create_params(pane.param_sizer)
+            func.instantiate(pane)
             self.notebook_1.AddPage(pane, "image", True)
             func.call()
             pane.set_display(func.results[0].display())
+            pane.Refresh()
         # self.Fit()
         self.Layout()
         self.Refresh()

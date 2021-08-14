@@ -8,23 +8,17 @@ class BaseParameter:
     pass
 
 
+ParamsTemplate = Dict[str, Tuple[Type[wx.Control], Tuple]]
+ParamsInstance = Dict[str, wx.Control]
+
+
 class BaseData:
-    PARAMS: Dict[str, Tuple[Any, ...]] = {}
+    PARAMS: ParamsTemplate = {}
     data: Any
 
-    def __init__(self, name: str, sizer: wx.GridSizer):
+    def __init__(self, name: str):
         self.name = name
-        self.sizer = sizer
-        self.params: Dict[str, wx.Control] = {}
-        for param, (ctrl, *args) in self.PARAMS.items():
-            self.add_widget(param, ctrl, args)
-
-    def add_widget(self, name: str, tp: Type[wx.Control], args: List[Any]):
-        parent = self.sizer.GetContainingWindow()
-        self.sizer.Add(wx.StaticText(parent, wx.ID_ANY, name), 0, wx.ALL | wx.EXPAND, 3)
-        ctrl = tp(parent, wx.ID_ANY, *args)
-        self.sizer.Add(ctrl, 0, wx.ALL | wx.EXPAND, 3)
-        self.params[name] = ctrl
+        self.params: ParamsInstance = {}
 
     def display(self) -> Union[wx.Image, np.array, int, float, str]:
         """Return an object representing the best visualisation of this data

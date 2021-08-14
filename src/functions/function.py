@@ -2,7 +2,8 @@ from typing import Callable, Dict, Tuple, List, Type, Any
 
 import wx
 
-from datatypes.base import BaseData
+from datatypes.base import BaseData, ParamsInstance
+from gui.pane import FunctionPane
 
 
 class Function:
@@ -11,18 +12,13 @@ class Function:
         self.func = func
         self.param_template = params
         self.results: List[BaseData] = results
-        self.params: Dict[str, wx.Control] = {}
+        self.params: ParamsInstance = {}
+        self.instantiated = False
 
-    def create_params(self, sizer: wx.FlexGridSizer):
-        for param, (ctrl, *args) in self.param_template.items():
-            self.add_widget(sizer, param, ctrl, args)
-
-    def add_widget(self, sizer: wx.FlexGridSizer, name: str, tp: Type[wx.Control], args: List[Any]):
-        parent = sizer.GetContainingWindow()
-        sizer.Add(wx.StaticText(parent, wx.ID_ANY, name))
-        ctrl = tp(parent, wx.ID_ANY, *args)
-        sizer.Add(ctrl)
-        self.params[name] = ctrl
+    def instantiate(self, pane: FunctionPane):
+        self.params = pane.add_input_params(self.param_template)
+        for result in self.results:
+            result.params = pane.add_output_params(result.__class__.__name__, result.PARAMS)
 
     def call(self):
         args = [ctrl.GetValue() for ctrl in self.params.values()]
