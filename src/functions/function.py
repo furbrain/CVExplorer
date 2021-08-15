@@ -1,7 +1,8 @@
-from typing import Callable, Dict, Tuple, List, Any, Optional
+from typing import Callable, Dict, Tuple, List, Any, Optional, TYPE_CHECKING
 
 from datatypes import BaseData, ParamsInstance
-from gui import FunctionPane
+if TYPE_CHECKING:
+    from gui import FunctionPane
 
 
 class Function:
@@ -20,7 +21,7 @@ class Function:
     def get_all_vars(cls) -> Dict[str, Any]:
         return {result.name: result.data for func in Function.ALL for result in func.results}
 
-    def instantiate(self, pane: FunctionPane):
+    def instantiate(self, pane: "FunctionPane"):
         self.pane = pane
         self.params = pane.add_input_params(self.param_template)
         for result in self.results:
@@ -34,8 +35,8 @@ class Function:
         self.pane.Refresh()
 
     def call(self):
-        args = [ctrl.GetValue() for ctrl in self.params.values()]
-        results = self.func(*args)
+        args = {name: ctrl.GetValue() for name, ctrl in self.params.items()}
+        results = self.func(**args)
         if len(self.results) == 1:
             self.results[0].data = results
         elif len(self.results) == len(results):
