@@ -14,7 +14,7 @@ class SupportsGetValue(Protocol):
         ...
 
     def Command(self, event: wx.CommandEvent) -> None:
-        ...
+        pass
 
 
 Control = Union[wx.Control, SupportsGetValue]
@@ -34,7 +34,8 @@ class BaseData:
     def display(self) -> Union[wx.Image, np.array, int, float, str]:
         """Return an object representing the best visualisation of this data
         This could be an image, a matrix or just a value"""
-        raise NotImplemented
+        raise NotImplementedError
 
     def serialize(self) -> str:
         """Return a text representation of this object"""
+        raise NotImplementedError
