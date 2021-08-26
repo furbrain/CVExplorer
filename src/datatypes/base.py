@@ -35,7 +35,3 @@ class BaseData:
         """Return an object representing the best visualisation of this data
         This could be an image, a matrix or just a value"""
         raise NotImplementedError
-
-    def serialize(self) -> str:
-        """Return a text representation of this object"""
-        raise NotImplementedError

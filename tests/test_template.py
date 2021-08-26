@@ -21,7 +21,11 @@ class TestFunctionTemplate(TestCase):
         print(html_frag)
 
     def test_get_arg_name_and_type_linked(self):
-        html_type = """<td class="paramtype"><a class="el" href="../../dc/d84/group__core__basic.html#ga3b46baee37d313d70dcd2875bb6ac521">OutputArray</a>&nbsp;</td>"""
+        html_type = """
+          <td class="paramtype">
+            <a class="el" href="../../dc/d84/group__core__basic.html">OutputArray</a>
+            &nbsp;
+          </td>"""
         html_name = """<td class="paramname"><em>dst</em>, </td>"""
         typename, varname = FunctionTemplate.get_arg_name_and_type(html.fromstring(html_type),
                                                                    html.fromstring(html_name))
@@ -38,7 +42,12 @@ class TestFunctionTemplate(TestCase):
 
     def test_get_arg_name_and_type_enum(self):
         html_type = """<td class="paramtype">int&nbsp;</td>"""
-        html_name = """<td class="paramname"><em>borderType</em> = <code><a class="el" href="../../d2/de8/group__core__array.html#gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01">BORDER_DEFAULT</a></code>&nbsp;</td>"""
+        html_name = """
+          <td class="paramname">
+            <em>borderType</em> = 
+            <code><a class="el" href="../../d2/de8/group__core__array.html">BORDER_DEFAULT</a></code>
+            &nbsp;
+          </td>"""
         typename, varname = FunctionTemplate.get_arg_name_and_type(html.fromstring(html_type),
                                                                    html.fromstring(html_name))
         self.assertEqual("BORDER_DEFAULT", typename)

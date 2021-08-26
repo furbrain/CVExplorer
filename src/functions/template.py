@@ -11,7 +11,6 @@ from controls import InputImage, IntSpin
 from lxml import html
 import cv2
 
-
 INPUT_MAPPING = {
     "InputArray": InputImage,
     "float": wx.lib.agw.floatspin.FloatSpin,

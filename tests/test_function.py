@@ -1,11 +1,8 @@
-import unittest
-from typing import Union
 from unittest import TestCase, mock
 from unittest.mock import call, Mock
 
 import gui
-from datatypes import ImageData, BooleanData, BaseData
-from datatypes.base import SupportsGetValue
+from datatypes import BaseData
 from functions import Function
 
 
@@ -27,7 +24,7 @@ class TestFunction(TestCase):
         """reset all properties of Function class"""
         Function.ALL = []
         self.function_list = []
-        self.pane: Union[Mock, gui.FunctionPane] = mock.create_autospec(gui.FunctionPane)
+        self.pane: Mock = mock.create_autospec(gui.FunctionPane)
 
     def createFixtures(self):
         self.f1 = Function("Function1", Mock(return_value=(0, 2)), {
