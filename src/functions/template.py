@@ -4,6 +4,7 @@ from typing import Dict, List
 import wx.lib.agw.floatspin
 
 import datatypes
+from controls.size_control import SizeControl
 from datatypes import ParamsTemplate
 from .function import Function
 from controls import InputImage, IntSpin
@@ -15,7 +16,8 @@ INPUT_MAPPING = {
     "InputArray": InputImage,
     "float": wx.lib.agw.floatspin.FloatSpin,
     "double": wx.lib.agw.floatspin.FloatSpin,
-    "int": IntSpin
+    "int": IntSpin,
+    "Size": SizeControl,
 }
 
 OUTPUT_MAPPING = {
@@ -24,15 +26,20 @@ OUTPUT_MAPPING = {
 
 
 class FunctionTemplate:
+    MISSING_INPUT_TYPES = set()
+    MISSING_OUTPUT_TYPES = set()
+
     def __init__(self, fragment: html.HtmlElement):
         type_dict: Dict[str, str] = {}
         function_table = fragment.xpath("*/table[@class='memname']")
         self.valid = False
         if not function_table:
             return
-        arg_types = function_table[0].xpath("*/td[@class='paramtype']")
-        arg_names = function_table[0].xpath("*/td[@class='paramname']")
-        retval = function_table[0].xpath("*/td[@class='memname']/a")
+        arg_types = function_table[0].xpath(".//td[@class='paramtype']")
+        arg_names = function_table[0].xpath(".//td[@class='paramname']")
+        retval = function_table[0].xpath(".//td[@class='memname']/a")
+        print(html.tostring(function_table[0]))
+        print(arg_names)
         if retval:
             type_dict['retval'] = retval[0].text
         for tp, name in zip(arg_types, arg_names):
@@ -48,6 +55,7 @@ class FunctionTemplate:
             else:
                 results: Dict[str, str] = match.groupdict()
                 output_list = [x.strip() for x in results['output'].split(',')]
+                print(type_dict)
                 self.outputs = {x: type_dict[x] for x in output_list}
                 self.func = results['func'].replace("cv.", "cv2.").strip()
                 args_list = [x.strip() for x in results['args'].split(',')]
@@ -55,11 +63,16 @@ class FunctionTemplate:
                 for x in self.outputs.keys():
                     if x in self.args:
                         del self.args[x]
-                print(self.outputs, self.func, self.args)
                 self.name = self.func.replace("cv2.", "")
-                if all(x in INPUT_MAPPING for x in self.args.values()):
-                    if all(x in OUTPUT_MAPPING for x in self.outputs.values()):
-                        self.valid = True
+                self.valid = True
+                for arg in self.args.values():
+                    if arg not in INPUT_MAPPING:
+                        self.MISSING_INPUT_TYPES.add(arg)
+                        self.valid = False
+                for output in self.outputs.values():
+                    if output not in OUTPUT_MAPPING:
+                        self.MISSING_OUTPUT_TYPES.add(output)
+                        self.valid = False
 
     @staticmethod
     def get_arg_name_and_type(tp: html.HtmlElement, name: html.HtmlElement):
@@ -85,13 +98,11 @@ class FunctionTemplate:
     def from_url(cls, url) -> List["FunctionTemplate"]:
         tree = cls.get_page_tree(url)
         title = tree.xpath("//div[@class='title']")
-        print(title[0].text)
         funcs: List[FunctionTemplate] = []
         func_table = tree.xpath(
             "//a[@name='func-members']/ancestor::table/descendant::tr[starts-with(@class,'memitem')]")
         for tr in func_table:
             guid = tr.get('class').replace("memitem:", "")
-            print(guid)
             func_definition = tree.xpath(f"//a[@id='{guid}']/following::div")
             f = FunctionTemplate(func_definition[0])
             if f.valid:
