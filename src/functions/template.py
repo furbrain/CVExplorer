@@ -97,3 +97,31 @@ class FunctionTemplate:
             if f.valid:
                 funcs.append(f)
         return funcs
+
+
+base_url = "file:///usr/share/doc/opencv-doc/opencv4/html/"
+
+
+def get_page_tree(url):
+    return html.parse(base_url + url)
+
+
+def parse_modules():
+    tree = get_page_tree("modules.html")
+    modules = tree.xpath("//tr/td/a")
+    for module in modules:
+        url: str = module.get("href")
+        if url.startswith("d"):
+            parse_page(url, module.text)
+
+
+def parse_page(url, name):
+    tree = get_page_tree(url)
+    title = tree.xpath("//div[@class='title']")
+    print(title[0].text)
+    func_table = tree.xpath("//a[@name='func-members']/ancestor::table/descendant::tr[starts-with(@class,'memitem')]")
+    for tr in func_table:
+        guid = tr.get('class').replace("memitem:", "")
+        print(guid)
+        func_definition = tree.xpath(f"//a[@id='{guid}']/following::div")
+        f = FunctionTemplate(func_definition[0])
