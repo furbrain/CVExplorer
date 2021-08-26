@@ -61,7 +61,8 @@ class FunctionTemplate:
                     if all(x in OUTPUT_MAPPING for x in self.outputs.values()):
                         self.valid = True
 
-    def get_arg_name_and_type(self, tp: html.HtmlElement, name: html.HtmlElement):
+    @staticmethod
+    def get_arg_name_and_type(tp: html.HtmlElement, name: html.HtmlElement):
         link = tp.find("a")
         if link is not None:
             typename = link.text.strip()

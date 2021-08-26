@@ -56,6 +56,7 @@ class CVEFrame(basegui.CVEFrame):
         self.Refresh()
 
     def add_menu_items(self):
+        # noinspection PyPep8
         funcs = FunctionTemplate.from_url("file:///usr/share/doc/opencv-doc/opencv4/html/d4/d86/group__imgproc__filter.html")
         menu = wx.Menu()
         for func in funcs:
@@ -63,6 +64,7 @@ class CVEFrame(basegui.CVEFrame):
             self.Bind(wx.EVT_MENU, partial(self.add_func, func), id=item.GetId())
         self.frame_menubar.Append(menu, "Image")
 
+    # noinspection PyUnusedLocal
     def add_func(self, func: FunctionTemplate, event):
         print(f"Adding function {func.name}")
         self.add_pane_from_func(func.create_function())
