@@ -60,7 +60,7 @@ class TestFunctionTemplate(TestCase):
         self.assertListEqual(["image1"], [r.name for r in function.results])
 
     def test_from_url(self):
-        funcs = FunctionTemplate.from_url(FIXTURES_FILTER_HTML)
+        _, funcs = FunctionTemplate.from_url(FIXTURES_FILTER_HTML, absolute=True)
         with self.subTest("output types"):
             self.assertSetEqual(set(), FunctionTemplate.MISSING_OUTPUT_TYPES)
         with self.subTest("input types"):

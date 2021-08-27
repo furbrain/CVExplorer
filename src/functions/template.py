@@ -1,7 +1,10 @@
 import re
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
+# noinspection PyUnresolvedReferences
+import cv2
 import wx.lib.agw.floatspin
+from lxml import html
 
 import datatypes
 from controls import InputImage, IntSpin, PointControl, SizeControl
@@ -26,6 +29,7 @@ OUTPUT_MAPPING = {
 
 
 class FunctionTemplate:
+    BASE_URL = "file:///usr/share/doc/opencv-doc/opencv4/html/"
     MISSING_INPUT_TYPES = set()
     MISSING_OUTPUT_TYPES = set()
 
@@ -88,13 +92,15 @@ class FunctionTemplate:
         func = Function(self.name, eval(self.func), params, results)
         return func
 
-    @staticmethod
-    def get_page_tree(url):
+    @classmethod
+    def get_page_tree(cls, url, absolute=False):
+        if not absolute:
+            url = cls.BASE_URL + url
         return html.parse(url)
 
     @classmethod
-    def from_url(cls, url) -> List["FunctionTemplate"]:
-        tree = cls.get_page_tree(url)
+    def from_url(cls, url, absolute=False) -> Tuple[str, List["FunctionTemplate"]]:
+        tree = cls.get_page_tree(url, absolute)
         title = tree.xpath("//div[@class='title']")
         funcs: List[FunctionTemplate] = []
         func_table = tree.xpath(
@@ -105,18 +111,15 @@ class FunctionTemplate:
             f = FunctionTemplate(func_definition[0])
             if f.valid:
                 funcs.append(f)
-        return funcs
+        return title[0].text, funcs
 
 
-base_url = "file:///usr/share/doc/opencv-doc/opencv4/html/"
-
-
-def get_page_tree(url):
-    return html.parse(base_url + url)
+def get_full_url(url):
+    return html.parse(FunctionTemplate.BASE_URL + url)
 
 
 def parse_modules():
-    tree = get_page_tree("modules.html")
+    tree = get_full_url("modules.html")
     modules = tree.xpath("//tr/td/a")
     for module in modules:
         url: str = module.get("href")
@@ -125,7 +128,8 @@ def parse_modules():
 
 
 def parse_page(url, name):
-    tree = get_page_tree(url)
+    print(f"Parsing {name}")
+    tree = get_full_url(url)
     title = tree.xpath("//div[@class='title']")
     print(title[0].text)
     func_table = tree.xpath("//a[@name='func-members']/ancestor::table/descendant::tr[starts-with(@class,'memitem')]")
@@ -134,3 +138,4 @@ def parse_page(url, name):
         print(guid)
         func_definition = tree.xpath(f"//a[@id='{guid}']/following::div")
         f = FunctionTemplate(func_definition[0])
+        print(f)
