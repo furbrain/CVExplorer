@@ -30,8 +30,12 @@ class Function:
 
     # noinspection PyUnusedLocal
     def on_changed(self, event=None):
-        self.call()
-        self.pane.set_display(self.results[0].display())
+        try:
+            self.call()
+        except Exception as e:
+            self.pane.set_display(e)
+        else:
+            self.pane.set_display(self.results[0].display())
         self.pane.Refresh()
 
     def call(self):

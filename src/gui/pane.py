@@ -1,6 +1,7 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Union
 
 import wx
+import wx.grid
 
 from datatypes.base import ParamsTemplate, ParamsInstance
 
@@ -29,7 +30,10 @@ class FunctionPane(wx.Panel):
 
         sizer_1 = wx.BoxSizer(wx.HORIZONTAL)  # top level
         sizer_3 = wx.BoxSizer(wx.VERTICAL)  # just to hold the bitmap jobby
-        self.bitmap = wx.StaticBitmap(self.display_pane)
+        self.results_bitmap = wx.StaticBitmap(self.display_pane)
+        self.results_text = wx.TextCtrl(self.display_pane, style=wx.TE_MULTILINE | wx.TE_READONLY)
+        self.results_matrix = wx.grid.Grid()
+        self.results_controls = [self.results_matrix, self.results_text, self.results_bitmap]
         sizer_1.Add(self.display_pane, 1, wx.ALL | wx.EXPAND, 3)
         sizer_1.Add(wx.StaticLine(self, style=wx.LI_VERTICAL), 0, wx.ALL | wx.EXPAND, 3)
         sizer_1.Add(self.params_pane, 0, wx.ALL | wx.EXPAND, 3)
@@ -38,12 +42,16 @@ class FunctionPane(wx.Panel):
         self.params_sizer = wx.BoxSizer(wx.VERTICAL)
         self.params_sizer.Add(self.input_param_sizer, 1, wx.ALL | wx.EXPAND, 3)
         self.params_sizer.Add(wx.StaticLine(self.params_pane, style=wx.LI_HORIZONTAL), 0, wx.ALL | wx.EXPAND, 3)
-        sizer_3.Add(self.bitmap, 0)
+        sizer_3.Add(self.results_bitmap, 1, wx.ALL | wx.EXPAND, 3)
+        sizer_3.Add(self.results_text, 1, wx.ALL | wx.EXPAND, 3)
+        sizer_3.Add(self.results_matrix, 1, wx.ALL | wx.EXPAND, 3)
         self.SetSizer(sizer_1)
         self.display_pane.SetSizer(sizer_3)
         self.params_pane.SetSizer(self.params_sizer)
         for evt in EVENTS:
             self.Bind(evt, self.on_change)
+        for c in self.results_controls:
+            c.Hide()
 
     def instantiate_params(self, params: ParamsTemplate) -> ParamsInstance:
         return {name: ctrl(self.params_pane, wx.ID_ANY, **args) for name, (ctrl, args) in params.items()}
@@ -68,11 +76,17 @@ class FunctionPane(wx.Panel):
         self.params_sizer.Add(box, 1, wx.EXPAND)
         return controls
 
-    def set_display(self, results):
+    def set_display(self, results: Union[wx.Bitmap, Exception]) -> None:
+        for c in self.results_controls:
+            c.Hide()
         if isinstance(results, wx.Bitmap):
-            self.bitmap.SetVirtualSize(results.GetSize())
-            self.bitmap.SetBitmap(results)
-            self.bitmap.Refresh()
+            self.results_bitmap.SetVirtualSize(results.GetSize())
+            self.results_bitmap.SetBitmap(results)
+            self.results_bitmap.Show()
+            self.results_bitmap.Refresh()
+        elif isinstance(results, Exception):
+            self.results_text.ChangeValue(f"Error: {results}")
+            self.results_text.Show()
 
     def register_change_handler(self, func: Callable):
         self.change_handler = func
