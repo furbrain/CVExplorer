@@ -37,8 +37,6 @@ class FunctionTemplate:
         arg_types = function_table[0].xpath(".//td[@class='paramtype']")
         arg_names = function_table[0].xpath(".//td[@class='paramname']")
         retval = function_table[0].xpath(".//td[@class='memname']/a")
-        print(html.tostring(function_table[0]))
-        print(arg_names)
         if retval:
             type_dict['retval'] = retval[0].text
         for tp, name in zip(arg_types, arg_names):

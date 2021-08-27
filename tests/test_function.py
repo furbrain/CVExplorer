@@ -70,10 +70,12 @@ class TestFunction(TestCase):
         self.createFixtures()
         self.f1.instantiate(self.pane)
         self.f1.on_changed()
+        # noinspection PyUnresolvedReferences
         self.f1.func.assert_called_once()
         self.pane.set_display.assert_called_with(None)
 
     def test_call(self):
         self.createFixtures()
         self.f1.call()
+        # noinspection PyUnresolvedReferences
         self.f1.func.assert_called_once()

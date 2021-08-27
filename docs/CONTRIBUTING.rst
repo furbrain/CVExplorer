@@ -17,7 +17,7 @@ Next, clone your fork to your local machine, keep it `up to date with the upstre
 
     git clone https://github.com/YOUR-USERNAME/python-project-skeleton.git
     cd python-project-skeleton
-    git remote add upstream git://github.com/joaomcteixeira/python-project-skeleton.git
+    git remote add upstream git://github.com/furbrain/CVExplorer.git
     git fetch upstream
     git merge upstream/master
     git pull origin master
@@ -31,17 +31,17 @@ If you are using :code:`pip` follow the official instructions on `Installing pac
 
 ::
 
-    python3 -m venv pyprojskel
-    source pyprojskel/bin/activate
+    python3 -m venv cvexplorer
+    source cvexplorer/bin/activate
 
 If you are using `Anaconda`_ go for:
 
 ::
 
-    conda create --name pyprojskel python=3.7
-    conda activate pyprojskel
+    conda create --name cvexplorer python=3.7
+    conda activate cvexplorer
 
-Where :code:`pyprojskel` is the name you wish to give to the environment dedicated to this project.
+Where :code:`cvexplorer` is the name you wish to give to the environment dedicated to this project.
 
 Either under *pip* or *conda*, install the package in :code:`develop` mode, and also :ref:`tox<Uniformed Tests with tox>`. **Note**, here I assume our project has **no** dependencies.
 
