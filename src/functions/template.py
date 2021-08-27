@@ -4,23 +4,24 @@ from typing import Dict, List
 import wx.lib.agw.floatspin
 
 import datatypes
-from controls.size_control import SizeControl
+from controls import InputImage, IntSpin, PointControl, SizeControl
 from datatypes import ParamsTemplate
 from .function import Function
-from controls import InputImage, IntSpin
-from lxml import html
-import cv2
 
 INPUT_MAPPING = {
     "InputArray": InputImage,
     "float": wx.lib.agw.floatspin.FloatSpin,
     "double": wx.lib.agw.floatspin.FloatSpin,
+    "bool": wx.CheckBox,
     "int": IntSpin,
     "Size": SizeControl,
+    "Point": PointControl,
+
 }
 
 OUTPUT_MAPPING = {
-    "OutputArray": datatypes.ImageData
+    "OutputArray": datatypes.ImageData,
+    "Mat": datatypes.ImageData,
 }
 
 
