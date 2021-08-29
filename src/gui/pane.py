@@ -77,7 +77,7 @@ class FunctionPane(wx.Panel):
         self.params_sizer.Add(box, 1, wx.EXPAND)
         return controls
 
-    def set_display(self, results: Union[wx.Bitmap, Exception]) -> None:
+    def set_display(self, results: Union[wx.Bitmap, Exception, str]) -> None:
         for c in self.results_controls:
             c.Hide()
         if isinstance(results, wx.Bitmap):
@@ -85,7 +85,7 @@ class FunctionPane(wx.Panel):
             self.results_bitmap.SetBitmap(results)
             self.results_bitmap.Show()
             self.results_bitmap.Refresh()
-        elif isinstance(results, Exception):
+        elif isinstance(results, (Exception, str)):
             self.results_text.ChangeValue(f"Error: {results}")
             self.results_text.Show()
         elif isinstance(results, np.ndarray):

@@ -14,5 +14,5 @@ class BooleanData(BaseData):
         super().__init__(name)
         self.data: Optional[bool] = None
 
-    def display(self) -> bool:
-        return self.data
+    def display(self) -> str:
+        return str(self.data)

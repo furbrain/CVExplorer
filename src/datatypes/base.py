@@ -31,7 +31,7 @@ class BaseData:
         self.name = name
         self.params: ParamsInstance = {}
 
-    def display(self) -> Union[wx.Image, np.array, int, float, str]:
+    def display(self) -> Union[wx.Bitmap, np.ndarray, str]:
         """Return an object representing the best visualisation of this data
         This could be an image, a matrix or just a value"""
         raise NotImplementedError
