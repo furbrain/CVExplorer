@@ -3,17 +3,20 @@ import wx
 from controls import IntSpin
 
 
-class PointControl(wx.FlexGridSizer):
+class PointControl(wx.Panel):
 
     # noinspection PyShadowingBuiltins,PyUnusedLocal
     def __init__(self, parent, id):
-        super().__init__(2, 3, 3)
-        self.Add(wx.StaticText(parent, label="X: "),)
-        self.x_control = IntSpin(parent, value="-1", min=-1)
-        self.Add(self.x_control)
-        self.Add(wx.StaticText(parent, label="Y: "),)
-        self.y_control = IntSpin(parent, value="-1", min=-1)
-        self.Add(self.y_control)
+        super().__init__(parent, id)
+        self.sizer = wx.FlexGridSizer(2, 3, 3)
+        self.sizer.Add(wx.StaticText(self, label="X: "),)
+        self.x_control = IntSpin(self, value="-1", min=-1)
+        self.sizer.Add(self.x_control)
+        self.sizer.Add(wx.StaticText(self, label="Y: "),)
+        self.y_control = IntSpin(self, value="-1", min=-1)
+        self.sizer.Add(self.y_control)
+        self.SetSizer(self.sizer)
+        self.Layout()
 
     # noinspection PyPep8Naming
     def GetValue(self):

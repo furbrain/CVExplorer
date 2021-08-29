@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Callable, Optional, Union
 
 import numpy as np
@@ -57,10 +58,16 @@ class FunctionPane(wx.Panel):
     def instantiate_params(self, params: ParamsTemplate) -> ParamsInstance:
         return {name: ctrl(self.params_pane, wx.ID_ANY, **args) for name, (ctrl, args) in params.items()}
 
+    @staticmethod
+    def show_control(control: wx.Window, shown: wx.ShowEvent) -> None:
+        control.Show(shown.IsShown())
+
     def add_param_controls_to_sizer(self, controls: ParamsInstance, sizer: wx.FlexGridSizer):
         for name, control in controls.items():
-            sizer.Add(wx.StaticText(self.params_pane, wx.ID_ANY, name), 0, wx.EXPAND | wx.ALL, 3)
+            text = wx.StaticText(self.params_pane, wx.ID_ANY, name)
+            sizer.Add(text, 0, wx.EXPAND | wx.ALL, 3)
             sizer.Add(control, 1, wx.EXPAND | wx.ALL, 3)
+            control.Bind(wx.EVT_SHOW, partial(self.show_control, text))
 
     def add_input_params(self, params: ParamsTemplate) -> ParamsInstance:
         controls = self.instantiate_params(params)
@@ -98,6 +105,7 @@ class FunctionPane(wx.Panel):
             self.results_matrix.Show()
         else:
             self.results_text.ChangeValue(f"Unknown display type: {type(results)}")
+        self.Layout()
 
     def register_change_handler(self, func: Callable):
         self.change_handler = func
