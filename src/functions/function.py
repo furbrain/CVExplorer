@@ -32,10 +32,11 @@ class Function:
     def on_changed(self, event=None):
         try:
             self.call()
+            results = self.results[0].display()
         except Exception as e:
             self.pane.set_display(e)
         else:
-            self.pane.set_display(self.results[0].display())
+            self.pane.set_display(results)
         self.pane.Refresh()
 
     def call(self):

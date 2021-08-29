@@ -1,7 +1,8 @@
 from typing import Callable, Optional, Union
 
+import numpy as np
 import wx
-import wx.grid
+import wx.dataview
 
 from datatypes.base import ParamsTemplate, ParamsInstance
 
@@ -32,7 +33,7 @@ class FunctionPane(wx.Panel):
         sizer_3 = wx.BoxSizer(wx.VERTICAL)  # just to hold the bitmap jobby
         self.results_bitmap = wx.StaticBitmap(self.display_pane)
         self.results_text = wx.TextCtrl(self.display_pane, style=wx.TE_MULTILINE | wx.TE_READONLY)
-        self.results_matrix = wx.grid.Grid()
+        self.results_matrix = wx.dataview.DataViewListCtrl(self.display_pane)
         self.results_controls = [self.results_matrix, self.results_text, self.results_bitmap]
         sizer_1.Add(self.display_pane, 1, wx.ALL | wx.EXPAND, 3)
         sizer_1.Add(wx.StaticLine(self, style=wx.LI_VERTICAL), 0, wx.ALL | wx.EXPAND, 3)
@@ -87,6 +88,16 @@ class FunctionPane(wx.Panel):
         elif isinstance(results, Exception):
             self.results_text.ChangeValue(f"Error: {results}")
             self.results_text.Show()
+        elif isinstance(results, np.ndarray):
+            self.results_matrix.DeleteAllItems()
+            self.results_matrix.ClearColumns()
+            for i in range(results.shape[1]):
+                self.results_matrix.AppendTextColumn(str(i))
+            for i in range(results.shape[0]):
+                self.results_matrix.AppendItem([str(x) for x in results[i, :]])
+            self.results_matrix.Show()
+        else:
+            self.results_text.ChangeValue(f"Unknown display type: {type(results)}")
 
     def register_change_handler(self, func: Callable):
         self.change_handler = func
