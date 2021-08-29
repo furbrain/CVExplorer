@@ -50,7 +50,7 @@ class TestFunctionTemplate(TestCase):
           </td>"""
         typename, varname = FunctionTemplate.get_arg_name_and_type(html.fromstring(html_type),
                                                                    html.fromstring(html_name))
-        self.assertEqual("BORDER_DEFAULT", typename)
+        self.assertEqual("BorderTypes", typename)
         self.assertEqual("borderType", varname)
 
     def test_create_function(self):
