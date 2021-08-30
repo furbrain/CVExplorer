@@ -4,7 +4,7 @@ import cv2
 from lxml import html
 from functions.template import FunctionTemplate
 
-FIXTURES_FILTER_HTML = "fixtures/filter.html"
+FIXTURES_FILTER_HTML = "/usr/share/doc/opencv-doc/opencv4/html/d4/d86/group__imgproc__filter.html"
 FIXTURES_FRAGMENT_HTML = "fixtures/filter_fragment.html"
 
 
@@ -17,8 +17,7 @@ class TestFunctionTemplate(TestCase):
             cls.filter_fragment = f.read()
 
     def setUp(self) -> None:
-        html_frag = html.fromstring(self.filter_fragment)
-        print(html_frag)
+        self.html_frag = html.fromstring(self.filter_fragment)
 
     def test_get_arg_name_and_type_linked(self):
         html_type = """
@@ -40,12 +39,14 @@ class TestFunctionTemplate(TestCase):
         self.assertEqual("int", typename)
         self.assertEqual("ddepth", varname)
 
+    # noinspection PyPep8,SpellCheckingInspection
     def test_get_arg_name_and_type_enum(self):
         html_type = """<td class="paramtype">int&nbsp;</td>"""
+        # noinspection PyPep8
         html_name = """
           <td class="paramname">
             <em>borderType</em> = 
-            <code><a class="el" href="../../d2/de8/group__core__array.html">BORDER_DEFAULT</a></code>
+            <code><a class="el" href="fixtures/group__core__array.html#gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01">BORDER_DEFAULT</a></code>
             &nbsp;
           </td>"""
         typename, varname = FunctionTemplate.get_arg_name_and_type(html.fromstring(html_type),
@@ -60,7 +61,7 @@ class TestFunctionTemplate(TestCase):
         self.assertListEqual(["image1"], [r.name for r in function.results])
 
     def test_from_url(self):
-        _, funcs = FunctionTemplate.from_url(FIXTURES_FILTER_HTML, absolute=True)
+        _, funcs = FunctionTemplate.from_url("d4/d86/group__imgproc__filter.html")
         with self.subTest("output types"):
             self.assertSetEqual(set(), FunctionTemplate.MISSING_OUTPUT_TYPES)
         with self.subTest("input types"):

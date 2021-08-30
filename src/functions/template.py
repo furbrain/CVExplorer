@@ -9,6 +9,7 @@ from lxml import html
 import datatypes
 from controls import InputImage, IntSpin, PointControl, SizeControl
 from datatypes import ParamsTemplate
+from .enum import Enum
 from .function import Function
 
 INPUT_MAPPING = {
@@ -57,7 +58,6 @@ class FunctionTemplate:
             else:
                 results: Dict[str, str] = match.groupdict()
                 output_list = [x.strip() for x in results['output'].split(',')]
-                print(type_dict)
                 self.outputs = {x: type_dict[x] for x in output_list}
                 self.func = results['func'].replace("cv.", "cv2.").strip()
                 args_list = [x.strip() for x in results['args'].split(',')]
@@ -68,7 +68,7 @@ class FunctionTemplate:
                 self.name = self.func.replace("cv2.", "")
                 self.valid = True
                 for arg in self.args.values():
-                    if arg not in INPUT_MAPPING:
+                    if arg not in INPUT_MAPPING and not Enum.from_name(arg):
                         self.MISSING_INPUT_TYPES.add(arg)
                         self.valid = False
                 for output in self.outputs.values():
@@ -84,10 +84,18 @@ class FunctionTemplate:
         else:
             typename = tp.text.strip()
         var_name = name.find("em").text
+        url: html.HtmlElement = name.find(".//a")
+        if url is not None:
+            url.make_links_absolute(url.base_url)
+            href = url.get("href")
+            e = Enum.from_url(href)
+            if e is not None:
+                typename = e.name
+
         return typename, var_name
 
     def create_function(self):
-        params: ParamsTemplate = {name: (INPUT_MAPPING[tp], {}) for name, tp in self.args.items()}
+        params: ParamsTemplate = {name: (self.get_input_param(tp), {}) for name, tp in self.args.items()}
         results = [OUTPUT_MAPPING[tp]() for tp in self.outputs.values()]
         func = Function(self.name, eval(self.func), params, results)
         return func
@@ -97,6 +105,15 @@ class FunctionTemplate:
         if not absolute:
             url = cls.BASE_URL + url
         return html.parse(url)
+
+    @classmethod
+    def get_input_param(cls, tp: str):
+        if tp in INPUT_MAPPING:
+            return INPUT_MAPPING[tp]
+        elif Enum.from_name(tp) is not None:
+            return Enum.from_name(tp)
+        else:
+            return None
 
     @classmethod
     def from_url(cls, url, absolute=False) -> Tuple[str, List["FunctionTemplate"]]:

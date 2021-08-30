@@ -14,7 +14,8 @@ EVENTS = [
     wx.EVT_COMBOBOX,
     wx.EVT_FILEPICKER_CHANGED,
     wx.EVT_TEXT,
-    wx.EVT_SPINCTRL
+    wx.EVT_SPINCTRL,
+    wx.EVT_CHOICE
 ]
 
 

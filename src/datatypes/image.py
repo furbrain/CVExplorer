@@ -39,7 +39,7 @@ class ImageDisplayer(ArrayDisplayer):
     def display(data: np.ndarray, params: ParamsInstance) -> Union[wx.Bitmap, np.ndarray]:
         h, w = data.shape[:2]
         if params["AutoExpose"].GetValue():
-            if len(data.shape)==3 and data.shap[2] >= 3:
+            if len(data.shape) == 3 and data.shape[2] >= 3:
                 img_yuv = cv2.cvtColor(data, cv2.COLOR_BGR2YUV)
                 img_yuv[:, :, 0] = cv2.equalizeHist(img_yuv[:, :, 0])
                 result = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
