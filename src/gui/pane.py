@@ -57,7 +57,14 @@ class FunctionPane(wx.Panel):
             c.Hide()
 
     def instantiate_params(self, params: ParamsTemplate) -> ParamsInstance:
-        return {name: ctrl(self.params_pane, wx.ID_ANY, **args) for name, (ctrl, args) in params.items()}
+        results = {}
+        for name, (ctrl, args) in params.items():
+            tooltip = args.get("tooltip", "")
+            args_without_tooltip = {k: v for k, v in args.items() if k != "tooltip"}
+            control = ctrl(self.params_pane, wx.ID_ANY, **args_without_tooltip)
+            control.SetToolTip(tooltip)
+            results[name] = control
+        return results
 
     @staticmethod
     def show_control(control: wx.Window, shown: wx.ShowEvent) -> None:

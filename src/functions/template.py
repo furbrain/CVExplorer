@@ -48,6 +48,7 @@ class FunctionTemplate:
         for tp, name in zip(arg_types, arg_names):
             type_name, var_name = self.get_arg_name_and_type(tp, name)
             type_dict[var_name] = type_name
+        self.param_descriptions = self.get_parameter_descriptions(fragment)
         python_row = fragment.xpath("*/table[@class='python_language']//tr/td")
         if python_row:
             signature = f"  {' '.join(row.text for row in python_row if row.text is not None)}"
@@ -94,8 +95,19 @@ class FunctionTemplate:
 
         return typename, var_name
 
+    def get_parameter_descriptions(self, fragment: html.HtmlElement) -> Dict[str, str]:
+        params = fragment.findall(".//table[@class='params']//tr")
+        results = {}
+        for param in params:
+            name, desc = param.findall("./td")
+            results[name.text_content().strip()] = desc.text_content().strip()
+        print(results)
+        return results
+
     def create_function(self):
-        params: ParamsTemplate = {name: (self.get_input_param(tp), {}) for name, tp in self.args.items()}
+        params: ParamsTemplate = {}
+        for name, tp in self.args.items():
+            params[name] = (self.get_input_param(tp), {"tooltip": self.param_descriptions[name]})
         results = [OUTPUT_MAPPING[tp]() for tp in self.outputs.values()]
         func = Function(self.name, eval(self.func), params, results)
         return func

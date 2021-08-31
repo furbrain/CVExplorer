@@ -19,7 +19,7 @@ class Enum:
         self.descriptions = descriptions
 
     # noinspection PyShadowingBuiltins
-    def __call__(self, parent: wx.Window, id):
+    def __call__(self, parent: wx.Window, id) -> EnumControl:
         return EnumControl(parent, id, self)
 
     @staticmethod
