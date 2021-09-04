@@ -15,7 +15,7 @@ class ParameterTemplate:
     MISSING_OUTPUT_TYPES: ClassVar[Set[str]] = set()
 
     name: str
-    type: ParamType
+    type: ParamType = attr.ib(converter=ParamType.from_name)
     description: str = ""
     default: Any = None
 

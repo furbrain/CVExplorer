@@ -57,14 +57,18 @@ class ParamType:
         self.REGISTER[self.name] = self
 
     @classmethod
-    def from_name(cls, text: str) -> Optional["ParamType"]:
+    def from_name(cls, name: Union[str, Type]) -> Optional["ParamType"]:
         if not cls.INITIALISED:
             cls.initialise()
-        if text in cls.REGISTER:
-            return cls.REGISTER[text]
+        if isinstance(name, cls):
+            return name
+        if isinstance(name, type):
+            name = name.__name__
+        if name in cls.REGISTER:
+            return cls.REGISTER[name]
         else:
-            print(f"Missing {text}: {type(text)}")
-            cls.MISSING_TYPES.add(text)
+            print(f"Missing {name}: {type(name)}")
+            cls.MISSING_TYPES.add(name)
             return None
 
     def get_input_control(self, parent: wx.Window, default=None) -> ParamControl:
