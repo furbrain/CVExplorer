@@ -1,12 +1,13 @@
 from typing import Optional, TYPE_CHECKING
 
-from .base import BaseData
+from .base import OutputData
 
 if TYPE_CHECKING:
     pass
 
 
-class BooleanData(BaseData):
+class BooleanData(OutputData):
+    HANDLED_CLASSES = [bool]
     PARAMS = {
     }
 

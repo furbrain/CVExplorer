@@ -2,7 +2,7 @@ from unittest import TestCase, mock
 from unittest.mock import call, Mock
 
 import gui
-from datatypes import BaseData
+from datatypes import OutputData
 from functions import Function
 
 
@@ -10,7 +10,7 @@ class DummyControl:
     pass
 
 
-class MockResult(BaseData):
+class MockResult(OutputData):
     def __init__(self, name, data):
         super().__init__(name)
         self.data = data

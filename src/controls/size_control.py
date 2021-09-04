@@ -3,6 +3,7 @@ import wx
 from controls import IntSpin
 
 
+# noinspection PyPep8Naming
 class SizeControl(wx.Panel):
 
     # noinspection PyShadowingBuiltins,PyUnusedLocal
@@ -16,6 +17,9 @@ class SizeControl(wx.Panel):
         self.height_control = IntSpin(self, value="3", min=-1)
         self.sizer.Add(self.height_control)
         self.SetSizer(self.sizer)
+
+    def SetValue(self, value):
+        pass
 
     # noinspection PyPep8Naming
     def GetValue(self):

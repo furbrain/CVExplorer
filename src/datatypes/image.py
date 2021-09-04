@@ -5,7 +5,9 @@ import numpy as np
 import wx
 
 from . import ParamsInstance
-from .base import BaseData
+from .base import OutputData
+from functions.parameter import ParameterTemplate
+from functions.paramtype import ParamType
 
 
 class ArrayDisplayer:
@@ -21,10 +23,10 @@ class ArrayDisplayer:
 
 
 class ImageDisplayer(ArrayDisplayer):
-    PARAMS = {
-        "AutoExpose": (wx.CheckBox, {}),
-        "Brightness": (wx.Slider, {'value': 0, "minValue": -100, "maxValue": 100})
-    }
+    PARAMS = [
+        ParameterTemplate("AutoExpose", ParamType.from_name("bool"), "Equalise contrast", default=False),
+        ParameterTemplate("Brightness", ParamType.from_name("int"), "Adjust brightness, default=0")
+    ]
 
     @staticmethod
     def can_handle(data: np.ndarray) -> bool:
@@ -67,7 +69,8 @@ class MatrixDisplayer(ArrayDisplayer):
         return data
 
 
-class ImageData(BaseData):
+class ImageData(OutputData):
+    HANDLED_CLASSES = ["Array"]
     IMAGE_COUNTER = 1
 
     ARRAYDISPLAYERS = [
@@ -76,10 +79,10 @@ class ImageData(BaseData):
     ]
 
     # set our params to be all of the params for the various array displayers
-    PARAMS = {key: value for displayer in ARRAYDISPLAYERS for key, value in displayer.PARAMS.items()}
+    PARAMS = [param for displayer in ARRAYDISPLAYERS for param in displayer.PARAMS]
 
-    def __init__(self):
-        name = f"image{self.IMAGE_COUNTER}"
+    def __init__(self, name: str):
+        name = f"{name}{self.IMAGE_COUNTER}"
         ImageData.IMAGE_COUNTER += 1
         super().__init__(name)
         self.data: Optional[np.ndarray] = None
@@ -92,7 +95,7 @@ class ImageData(BaseData):
                     for param in self.params.values():
                         param.Hide()
                     for param_name in displayer.PARAMS:
-                        self.params[param_name].Show()
+                        self.params[param_name.name].Show()
                     self.last_displayer = displayer
                 return displayer.display(self.data, self.params)
         else:

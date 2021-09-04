@@ -1,15 +1,18 @@
 from functools import partial
+from typing import List
 
 import cv2
 import wx
-from datatypes import ImageData, ParamsTemplate
-from functions import Function
+
+from datatypes import ImageData
+from functions import Function, ParameterTemplate, ParamType
 from functions.template import FunctionTemplate
 from . import basegui
 from .pane import FunctionPane
 
 
 class CVEFrame(basegui.CVEFrame):
+
     def load_image(self, event):
         # first get our pathname...
         with wx.FileDialog(self,
@@ -18,8 +21,9 @@ class CVEFrame(basegui.CVEFrame):
             if fd.ShowModal() != wx.ID_OK:
                 return
         path = fd.GetPath()
-        params: ParamsTemplate = {"filename": (wx.TextCtrl, {"value": path})}
-        results = [ImageData()]
+        params: List[ParameterTemplate] = [
+            ParameterTemplate("filename", ParamType.from_name("str"), "Name of file to be loaded", default=path)]
+        results = [ImageData("image")]
         func = Function("Load image", cv2.imread, params, results)
         self.add_pane_from_func(func)
 

@@ -19,5 +19,9 @@ class PointControl(wx.Panel):
         self.Layout()
 
     # noinspection PyPep8Naming
+    def SetValue(self, value):
+        pass
+
+    # noinspection PyPep8Naming
     def GetValue(self):
         return self.x_control.GetValue(), self.y_control.GetValue()

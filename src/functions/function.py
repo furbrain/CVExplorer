@@ -1,6 +1,8 @@
-from typing import Callable, Dict, Tuple, List, Any, Optional, TYPE_CHECKING
+from typing import Callable, Dict, List, Any, Optional, TYPE_CHECKING
 
-from datatypes import BaseData, ParamsInstance
+from datatypes import OutputData
+from .parameter import ParameterTemplate
+
 if TYPE_CHECKING:
     from gui import FunctionPane
 
@@ -8,12 +10,12 @@ if TYPE_CHECKING:
 class Function:
     ALL: List["Function"] = []
 
-    def __init__(self, name: str, func: Callable, params: Dict[str, Tuple], results: List[BaseData]):
+    def __init__(self, name: str, func: Callable, params: List[ParameterTemplate], results: List[OutputData]):
         self.name = name
         self.func = func
         self.param_template = params
-        self.results: List[BaseData] = results
-        self.params: ParamsInstance = {}
+        self.results: List[OutputData] = results
+        self.params = {}
         self.pane: Optional[FunctionPane] = None
         self.ALL.append(self)
 
@@ -35,6 +37,7 @@ class Function:
             results = self.results[0].display()
         except Exception as e:
             self.pane.set_display(e)
+            raise e
         else:
             self.pane.set_display(results)
         self.pane.Refresh()

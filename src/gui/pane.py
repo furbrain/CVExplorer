@@ -1,11 +1,12 @@
 from functools import partial
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Union, List
 
 import numpy as np
 import wx
 import wx.dataview
 
-from datatypes.base import ParamsTemplate, ParamsInstance
+from datatypes.base import ParamsInstance
+from functions import ParameterTemplate
 
 EVENTS = [
     wx.EVT_BUTTON,
@@ -25,9 +26,11 @@ class FunctionPane(wx.Panel):
         super().__init__(nb)
         self.display = None
         self.change_handler: Optional[Callable] = None
-        self.display_pane = wx.ScrolledWindow(self, style=wx.TAB_TRAVERSAL)
-        self.params_pane = wx.ScrolledWindow(self, style=wx.TAB_TRAVERSAL)
-        self.params_pane.SetMinSize((300, -1))
+        self.splitter = wx.SplitterWindow(self)
+        self.display_pane = wx.ScrolledWindow(self.splitter, style=wx.TAB_TRAVERSAL)
+        self.params_pane = wx.ScrolledWindow(self.splitter, style=wx.TAB_TRAVERSAL | wx.VSCROLL)
+        self.splitter.SplitVertically(self.display_pane, self.params_pane, -300)
+        # self.params_pane.SetMinSize((300, -1))
         self.display_pane.SetScrollRate(10, 10)
         self.params_pane.SetScrollRate(10, 10)
 
@@ -37,9 +40,9 @@ class FunctionPane(wx.Panel):
         self.results_text = wx.TextCtrl(self.display_pane, style=wx.TE_MULTILINE | wx.TE_READONLY)
         self.results_matrix = wx.dataview.DataViewListCtrl(self.display_pane)
         self.results_controls = [self.results_matrix, self.results_text, self.results_bitmap]
-        sizer_1.Add(self.display_pane, 1, wx.ALL | wx.EXPAND, 3)
-        sizer_1.Add(wx.StaticLine(self, style=wx.LI_VERTICAL), 0, wx.ALL | wx.EXPAND, 3)
-        sizer_1.Add(self.params_pane, 0, wx.ALL | wx.EXPAND, 3)
+        # sizer_1.Add(self.display_pane, 1, wx.ALL | wx.EXPAND, 3)
+        # sizer_1.Add(wx.StaticLine(self, style=wx.LI_VERTICAL), 0, wx.ALL | wx.EXPAND, 3)
+        # sizer_1.Add(self.params_pane, 0, wx.ALL | wx.EXPAND, 3)
         self.input_param_sizer = wx.FlexGridSizer(2, 0, 3)
         self.input_param_sizer.AddGrowableCol(1)
         self.params_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -48,6 +51,7 @@ class FunctionPane(wx.Panel):
         sizer_3.Add(self.results_bitmap, 1, wx.ALL | wx.EXPAND, 3)
         sizer_3.Add(self.results_text, 1, wx.ALL | wx.EXPAND, 3)
         sizer_3.Add(self.results_matrix, 1, wx.ALL | wx.EXPAND, 3)
+        sizer_1.Add(self.splitter, 1, wx.EXPAND)
         self.SetSizer(sizer_1)
         self.display_pane.SetSizer(sizer_3)
         self.params_pane.SetSizer(self.params_sizer)
@@ -56,15 +60,8 @@ class FunctionPane(wx.Panel):
         for c in self.results_controls:
             c.Hide()
 
-    def instantiate_params(self, params: ParamsTemplate) -> ParamsInstance:
-        results = {}
-        for name, (ctrl, args) in params.items():
-            tooltip = args.get("tooltip", "")
-            args_without_tooltip = {k: v for k, v in args.items() if k != "tooltip"}
-            control = ctrl(self.params_pane, wx.ID_ANY, **args_without_tooltip)
-            control.SetToolTip(tooltip)
-            results[name] = control
-        return results
+    def instantiate_params(self, params: List[ParameterTemplate]) -> ParamsInstance:
+        return {x.name: x.get_input_control(self.params_pane) for x in params}
 
     @staticmethod
     def show_control(control: wx.Window, shown: wx.ShowEvent) -> None:
@@ -77,12 +74,12 @@ class FunctionPane(wx.Panel):
             sizer.Add(control, 1, wx.EXPAND | wx.ALL, 3)
             control.Bind(wx.EVT_SHOW, partial(self.show_control, text))
 
-    def add_input_params(self, params: ParamsTemplate) -> ParamsInstance:
+    def add_input_params(self, params: List[ParameterTemplate]) -> ParamsInstance:
         controls = self.instantiate_params(params)
         self.add_param_controls_to_sizer(controls, self.input_param_sizer)
         return controls
 
-    def add_output_params(self, name: str, params: ParamsTemplate) -> ParamsInstance:
+    def add_output_params(self, name: str, params: List[ParameterTemplate]) -> ParamsInstance:
         sizer = wx.FlexGridSizer(2, 0, 3)
         controls = self.instantiate_params(params)
         self.add_param_controls_to_sizer(controls, sizer)
@@ -103,6 +100,7 @@ class FunctionPane(wx.Panel):
         elif isinstance(results, (Exception, str)):
             self.results_text.ChangeValue(f"Error: {results}")
             self.results_text.Show()
+            self.results_text.Refresh()
         elif isinstance(results, np.ndarray):
             self.results_matrix.DeleteAllItems()
             self.results_matrix.ClearColumns()
@@ -111,6 +109,7 @@ class FunctionPane(wx.Panel):
             for i in range(results.shape[0]):
                 self.results_matrix.AppendItem([str(x) for x in results[i, :]])
             self.results_matrix.Show()
+            self.results_matrix.Refresh()
         else:
             self.results_text.ChangeValue(f"Unknown display type: {type(results)}")
         self.Layout()

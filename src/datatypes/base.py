@@ -1,7 +1,11 @@
-from typing import Union, Dict, Tuple, Type, Any, Protocol
+import typing
+from typing import Union, Dict, Tuple, Type, Any, Protocol, ClassVar, List
 
 import numpy as np
 import wx
+
+if typing.TYPE_CHECKING:
+    from functions import ParameterTemplate
 
 
 class BaseParameter:
@@ -23,8 +27,9 @@ ParamsTemplate = Dict[str, Tuple[Type[Control], Dict[str, Any]]]
 ParamsInstance = Dict[str, Control]
 
 
-class BaseData:
-    PARAMS: ParamsTemplate = {}
+class OutputData:
+    HANDLED_CLASSES: ClassVar[List[Union[Type, str]]] = []
+    PARAMS: ClassVar[List["ParameterTemplate"]] = []
     data: Any
 
     def __init__(self, name: str):
@@ -35,3 +40,13 @@ class BaseData:
         """Return an object representing the best visualisation of this data
         This could be an image, a matrix or just a value"""
         raise NotImplementedError
+
+    @classmethod
+    def handles_type(cls, tp: Union[Type, str]) -> bool:
+        return tp in cls.HANDLED_CLASSES
+
+    @classmethod
+    def from_type(cls, tp: Union[Type, str], name: str) -> "OutputData":
+        for klass in cls.__subclasses__():
+            if klass.handles_type(tp):
+                return klass(name)
