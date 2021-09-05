@@ -7,11 +7,18 @@ import wx
 from datatypes import ImageData
 from functions import Function, ParameterTemplate, ParamType
 from functions.template import FunctionTemplate
+from gui.basegui import CodeDialog
 from . import basegui
 from .pane import FunctionPane
 
 
 class CVEFrame(basegui.CVEFrame):
+
+    def generate_code(self, event):
+        text = '\n'.join(func.as_code() for func in Function.ALL)
+        dlg = CodeDialog(None)
+        dlg.text.SetValue("import cv2\n\n" + text)
+        dlg.Show()
 
     def load_image(self, event):
         # first get our pathname...
