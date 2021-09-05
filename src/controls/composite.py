@@ -2,7 +2,6 @@ from typing import List, TYPE_CHECKING, Dict, Type, ClassVar
 
 import wx
 
-
 if TYPE_CHECKING:
     from functions import ParameterTemplate
     from functions.paramtype import ParamControl
@@ -11,7 +10,6 @@ if TYPE_CHECKING:
 # noinspection PyPep8Naming
 class CompositeControl(wx.Panel):
     _FIELDS: ClassVar[List["ParameterTemplate"]] = []
-
 
     # noinspection PyShadowingBuiltins
     def __init__(self, parent: wx.Window, id: int = wx.ID_ANY):

@@ -57,7 +57,7 @@ class ParamType:
         self.REGISTER[self.name] = self
 
     @classmethod
-    def from_name(cls, name: Union[str, Type]) -> Optional["ParamType"]:
+    def from_name(cls, name: Union["ParamType", str, Type]) -> Optional["ParamType"]:
         if not cls.INITIALISED:
             cls.initialise()
         if isinstance(name, cls):

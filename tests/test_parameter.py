@@ -43,11 +43,11 @@ class TestParameterTemplate(TestCase):
     # noinspection PyPep8,SpellCheckingInspection
     def test_get_arg_name_and_type_enum(self):
         html_type = """<td class="paramtype">int&nbsp;</td>"""
-        # noinspection PyPep8
         html_name = """
           <td class="paramname">
             <em>borderType</em> = 
-            <code><a class="el" href="../../d2/de8/group__core__array.html#gga209f2f4869e304c82d07739337eae7c5afe14c13a4ea8b8e3b3ef399013dbae01">BORDER_DEFAULT</a></code>
+            <code><a class="el" href="../../d2/de8/group__core__array.html#gga209f2f4869e304c82d07739337""" + """
+                eae7c5afe14c13a4ea8b8e3b3ef399013dbae01">BORDER_DEFAULT</a></code>
             &nbsp;
           </td>"""
         html_desc = """<td>border type. </td>"""

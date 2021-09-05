@@ -13,6 +13,14 @@ class FunctionTemplate:
     BASE_URL = "file:///usr/share/doc/opencv-doc/opencv4/html/"
 
     def __init__(self, fragment: html.HtmlElement):
+        parameters = self.get_parameters(fragment)
+        # print(parameters.items())
+        self.parameter_templates = {name: ParameterTemplate.from_html_fragments(**value)
+                                    for name, value in parameters.items()}
+        print(self.parameter_templates)
+        self.name, self.input_vars, self.output_vars = self.process_signature(fragment)
+
+    def get_parameters(self, fragment):
         parameters: Dict[str, Dict[str, html.HtmlElement]] = {}
         function_table = fragment.find("*/table[@class='memname']")
         if function_table is None:
@@ -30,16 +38,11 @@ class FunctionTemplate:
             parameters["retval"] = {"tp": retval, "name": html.fromstring("<p>retval</p>"), "desc": None}
         for tp, name in zip(arg_types, arg_names):
             parameters[name.find("em").text] = {"tp": tp, "name": name}
-        self.param_descriptions = self.get_parameter_descriptions(fragment)
-        for name, desc in self.param_descriptions.items():
+        for name, desc in self.get_parameter_descriptions(fragment).items():
             # print(name)
             if name in parameters:
                 parameters[name]["desc"] = desc
-        # print(parameters.items())
-        self.parameter_templates = {name: ParameterTemplate.from_html_fragments(**value)
-                                    for name, value in parameters.items()}
-        print(self.parameter_templates)
-        self.process_signature(fragment)
+        return parameters
 
     def get_outputs(self) -> List[ParameterTemplate]:
         return [self.parameter_templates[name] for name in self.output_vars]
@@ -48,19 +51,22 @@ class FunctionTemplate:
         print(f"input vars{self.input_vars}")
         return [self.parameter_templates[name] for name in self.input_vars]
 
-    def process_signature(self, fragment):
+    @staticmethod
+    def process_signature(fragment) -> Tuple[str, List[str], List[str]]:
         python_row = fragment.find("*/table[@class='python_language']//tr[2]")
         if python_row is not None:
             signature = python_row.text_content()
             signature = signature.translate({ord('['): None, ord(']'): None})
             match = re.match(r'(?P<output>.*)=(?P<func>.*)\((?P<args>.*)\)', signature)
             results: Dict[str, str] = match.groupdict()
-            self.output_vars = [x.strip() for x in results['output'].split(',')]
-            self.func = results['func'].replace("cv.", "cv2.").strip()
-            self.input_vars = [x.strip() for x in results['args'].split(',') if x.strip() not in self.output_vars]
-            self.name = self.func.replace("cv2.", "")
+            output_vars = [x.strip() for x in results['output'].split(',')]
+            name = results['func'].replace("cv.", "").strip()
+            input_vars = [x.strip() for x in results['args'].split(',') if x.strip() not in output_vars]
         else:
-            self.name = None
+            name = None
+            input_vars = None
+            output_vars = None
+        return name, input_vars, output_vars
 
     def is_valid(self):
         return self.name and all(x.is_valid() for x in self.parameter_templates.values())
@@ -75,7 +81,10 @@ class FunctionTemplate:
         return results
 
     def create_function(self):
-        return Function(self.name, eval(self.func), self.get_vars(), [x.get_output_data() for x in self.get_outputs()])
+        return Function(self.name,
+                        eval(f"cv2.{self.name}"),
+                        self.get_vars(),
+                        [x.get_output_data() for x in self.get_outputs()])
 
     @classmethod
     def get_page_tree(cls, url, absolute=False):

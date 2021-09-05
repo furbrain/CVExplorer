@@ -3,7 +3,7 @@ from unittest.mock import call, Mock
 
 import gui
 from datatypes import OutputData
-from functions import Function
+from functions import Function, ParameterTemplate
 
 
 class DummyControl:
@@ -19,6 +19,7 @@ class MockResult(OutputData):
         return None
 
 
+# noinspection PyTypeChecker
 class TestFunction(TestCase):
     def setUp(self) -> None:
         """reset all properties of Function class"""
@@ -27,20 +28,18 @@ class TestFunction(TestCase):
         self.pane: Mock = mock.create_autospec(gui.FunctionPane)
 
     def createFixtures(self):
-        self.f1 = Function("Function1", Mock(return_value=(0, 2)), {
-            # parameters
-            "param1": ({"filename": (DummyControl, {"value": 0})},),
-            "param2": ({"mode": (DummyControl, {"val": 1})},)
-        }, [
+        self.f1 = Function("Function1", Mock(return_value=(0, 2)), [
+            ParameterTemplate("filename", str, "Filename to load", ""),
+            ParameterTemplate("mode", int)
+        ], [
                                # results
                                MockResult("image1", 0),
                                MockResult("result", 2)
                            ])
-        self.f2 = Function("Function1", Mock(), {
-            # parameters
-            "param1": ({"filename": (DummyControl, {"value": ""})},),
-            "param2": ({"mode": (DummyControl, {"val": 1})},)
-        }, [
+        self.f2 = Function("Function1", Mock(), [
+            ParameterTemplate("filename", str, "Filename to load", ""),
+            ParameterTemplate("mode", int)
+        ], [
                                # results
                                MockResult("image2", 1),
                                MockResult("result2", 3)

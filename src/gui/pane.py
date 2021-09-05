@@ -96,11 +96,9 @@ class FunctionPane(wx.Panel):
             self.results_bitmap.SetVirtualSize(results.GetSize())
             self.results_bitmap.SetBitmap(results)
             self.results_bitmap.Show()
-            self.results_bitmap.Refresh()
         elif isinstance(results, (Exception, str)):
             self.results_text.ChangeValue(f"Error: {results}")
             self.results_text.Show()
-            self.results_text.Refresh()
         elif isinstance(results, np.ndarray):
             self.results_matrix.DeleteAllItems()
             self.results_matrix.ClearColumns()
@@ -109,9 +107,10 @@ class FunctionPane(wx.Panel):
             for i in range(results.shape[0]):
                 self.results_matrix.AppendItem([str(x) for x in results[i, :]])
             self.results_matrix.Show()
-            self.results_matrix.Refresh()
         else:
             self.results_text.ChangeValue(f"Unknown display type: {type(results)}")
+        self.display_pane.Layout()
+        self.Refresh()
         self.Layout()
 
     def register_change_handler(self, func: Callable):
