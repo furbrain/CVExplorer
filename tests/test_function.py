@@ -10,6 +10,7 @@ class DummyControl:
     def __init__(self, default):
         self.default = default
 
+    # noinspection PyPep8Naming
     def GetValue(self):
         return self.default
 
@@ -86,6 +87,7 @@ class TestFunction(TestCase):
     def test_get_code(self):
         def mock_input_params(params):
             return {x.name: DummyControl(x.default) for x in params}
+
         self.createFixtures()
         self.pane.add_input_params.side_effect = mock_input_params
         self.f1.instantiate(self.pane)

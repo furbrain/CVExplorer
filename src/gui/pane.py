@@ -7,6 +7,7 @@ import wx.dataview
 
 from datatypes.base import ParamsInstance
 from functions import ParameterTemplate
+from gui.basegui import FunctionPaneBase
 
 EVENTS = [
     wx.EVT_BUTTON,
@@ -21,40 +22,11 @@ EVENTS = [
 
 
 # noinspection PyUnusedLocal
-class FunctionPane(wx.Panel):
+class FunctionPane(FunctionPaneBase):
     def __init__(self, nb: wx.Notebook):
         super().__init__(nb)
-        self.display = None
         self.change_handler: Optional[Callable] = None
-        self.splitter = wx.SplitterWindow(self)
-        self.display_pane = wx.ScrolledWindow(self.splitter, style=wx.TAB_TRAVERSAL)
-        self.params_pane = wx.ScrolledWindow(self.splitter, style=wx.TAB_TRAVERSAL | wx.VSCROLL)
-        self.splitter.SplitVertically(self.display_pane, self.params_pane, -300)
-        # self.params_pane.SetMinSize((300, -1))
-        self.display_pane.SetScrollRate(10, 10)
-        self.params_pane.SetScrollRate(10, 10)
-
-        sizer_1 = wx.BoxSizer(wx.HORIZONTAL)  # top level
-        sizer_3 = wx.BoxSizer(wx.VERTICAL)  # just to hold the bitmap jobby
-        self.results_bitmap = wx.StaticBitmap(self.display_pane)
-        self.results_text = wx.TextCtrl(self.display_pane, style=wx.TE_MULTILINE | wx.TE_READONLY)
-        self.results_matrix = wx.dataview.DataViewListCtrl(self.display_pane)
         self.results_controls = [self.results_matrix, self.results_text, self.results_bitmap]
-        # sizer_1.Add(self.display_pane, 1, wx.ALL | wx.EXPAND, 3)
-        # sizer_1.Add(wx.StaticLine(self, style=wx.LI_VERTICAL), 0, wx.ALL | wx.EXPAND, 3)
-        # sizer_1.Add(self.params_pane, 0, wx.ALL | wx.EXPAND, 3)
-        self.input_param_sizer = wx.FlexGridSizer(2, 0, 3)
-        self.input_param_sizer.AddGrowableCol(1)
-        self.params_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.params_sizer.Add(self.input_param_sizer, 1, wx.ALL | wx.EXPAND, 3)
-        self.params_sizer.Add(wx.StaticLine(self.params_pane, style=wx.LI_HORIZONTAL), 0, wx.ALL | wx.EXPAND, 3)
-        sizer_3.Add(self.results_bitmap, 1, wx.ALL | wx.EXPAND, 3)
-        sizer_3.Add(self.results_text, 1, wx.ALL | wx.EXPAND, 3)
-        sizer_3.Add(self.results_matrix, 1, wx.ALL | wx.EXPAND, 3)
-        sizer_1.Add(self.splitter, 1, wx.EXPAND)
-        self.SetSizer(sizer_1)
-        self.display_pane.SetSizer(sizer_3)
-        self.params_pane.SetSizer(self.params_sizer)
         for evt in EVENTS:
             self.Bind(evt, self.on_change)
         for c in self.results_controls:
