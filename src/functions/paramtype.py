@@ -2,7 +2,6 @@ from typing import Type, Union, Dict, ClassVar, Any, Protocol, Tuple, Optional, 
 
 import attr
 import wx
-from wx.lib.agw.floatspin import FloatSpin
 
 import controls
 
@@ -20,6 +19,9 @@ class ParamControl(Protocol):
     def GetValue(self) -> Any:
         ...
 
+    def GetCode(self) -> str:
+        ...
+
     # noinspection PyPep8Naming
     def SetToolTip(self, text: str) -> None:
         ...
@@ -31,16 +33,16 @@ class ParamType:
     INITIALISED: ClassVar[bool] = False
     REGISTER: ClassVar[Dict[str, "ParamType"]] = {}
     BUILT_INS: ClassVar[Dict[Union[Type, str], Tuple[ParamControl, Any]]] = {
-        int: (controls.IntSpin, "1"),
-        float: (FloatSpin, 1.0),
-        bool: (wx.CheckBox, False),
+        int: (controls.IntControl, "1"),
+        float: (controls.FloatControl, 1.0),
+        bool: (controls.BoolControl, False),
         "Size": (controls.SizeControl, None),
         "Point": (controls.PointControl, None),
         "TermCriteria": (controls.TermCriteriaControl, None),
         "Scalar": (controls.ScalarControl, None),
         "Array": (controls.ArrayControl, None),
         "ArrayOfArrays": (controls.ArrayControl, None),
-        str: (wx.TextCtrl, "")
+        str: (controls.TextControl, "")
     }
     BUILT_IN_MAPS: ClassVar[Dict[str, str]] = {
         "double": "float",

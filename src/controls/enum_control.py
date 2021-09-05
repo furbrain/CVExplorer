@@ -41,3 +41,6 @@ class EnumControl(wx.Choice):
             text = self.tooltip_contents
         super().SetToolTip(text)
 
+    # noinspection PyPep8Naming
+    def GetCode(self) -> str:
+        return f"cv2.{self.GetStringSelection()}"

@@ -56,5 +56,5 @@ class Function:
 
     def as_code(self):
         result_names = ", ".join(result.name for result in self.results)
-        param_values = ", ".join(f"{name}={repr(param.GetValue())}" for name, param in self.params.items())
+        param_values = ", ".join(f"{name}={param.GetCode()}" for name, param in self.params.items())
         return f"{result_names} = cv2.{self.name}({param_values})"

@@ -31,6 +31,9 @@ class CompositeControl(wx.Panel):
     def GetValue(self):
         return tuple(self.controls[field.name].GetValue() for field in self.FIELDS)
 
+    def GetCode(self):
+        return f"({', '.join(self.controls[field.name].GetCode() for field in self.FIELDS)})"
+
     @classmethod
     def from_param_list(cls, name: str, params: List["ParameterTemplate"]) -> Type["CompositeControl"]:
         # noinspection PyTypeChecker

@@ -3,6 +3,7 @@ from typing import Optional
 import wx
 
 
+# noinspection PyPep8Naming
 class ArrayControl(wx.ComboBox):
     # noinspection PyShadowingBuiltins
     def __init__(self, parent, id):
@@ -19,3 +20,6 @@ class ArrayControl(wx.ComboBox):
     def GetValue(self):
         from functions import Function
         return eval(super().GetValue(), Function.get_all_vars())
+
+    def GetCode(self):
+        return super().GetValue()
