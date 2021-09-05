@@ -7,7 +7,11 @@ from functions import Function, ParameterTemplate
 
 
 class DummyControl:
-    pass
+    def __init__(self, default):
+        self.default = default
+
+    def GetValue(self):
+        return self.default
 
 
 class MockResult(OutputData):
@@ -29,14 +33,14 @@ class TestFunction(TestCase):
 
     def createFixtures(self):
         self.f1 = Function("Function1", Mock(return_value=(0, 2)), [
-            ParameterTemplate("filename", str, "Filename to load", ""),
-            ParameterTemplate("mode", int)
+            ParameterTemplate("filename", str, "Filename to load", "filename.jpg"),
+            ParameterTemplate("mode", int, default=1)
         ], [
                                # results
                                MockResult("image1", 0),
                                MockResult("result", 2)
                            ])
-        self.f2 = Function("Function1", Mock(), [
+        self.f2 = Function("Function2", Mock(), [
             ParameterTemplate("filename", str, "Filename to load", ""),
             ParameterTemplate("mode", int)
         ], [
@@ -78,3 +82,11 @@ class TestFunction(TestCase):
         self.f1.call()
         # noinspection PyUnresolvedReferences
         self.f1.func.assert_called_once()
+
+    def test_get_code(self):
+        def mock_input_params(params):
+            return {x.name: DummyControl(x.default) for x in params}
+        self.createFixtures()
+        self.pane.add_input_params.side_effect = mock_input_params
+        self.f1.instantiate(self.pane)
+        self.assertEqual("image1, result = cv2.Function1(filename='filename.jpg', mode=1)", self.f1.as_code())

@@ -2,6 +2,7 @@ from typing import Callable, Dict, List, Any, Optional, TYPE_CHECKING
 
 from datatypes import OutputData
 from .parameter import ParameterTemplate
+from .paramtype import ParamControl
 
 if TYPE_CHECKING:
     from gui import FunctionPane
@@ -15,7 +16,7 @@ class Function:
         self.func = func
         self.param_template = params
         self.results: List[OutputData] = results
-        self.params = {}
+        self.params: Dict[str, ParamControl] = {}
         self.pane: Optional[FunctionPane] = None
         self.ALL.append(self)
 
@@ -52,3 +53,8 @@ class Function:
                 result.data = temp_result
         else:
             raise TypeError("Wrong number of results returned")
+
+    def as_code(self):
+        result_names = ", ".join(result.name for result in self.results)
+        param_values = ", ".join(f"{name}={repr(param.GetValue())}" for name, param in self.params.items())
+        return f"{result_names} = cv2.{self.name}({param_values})"
