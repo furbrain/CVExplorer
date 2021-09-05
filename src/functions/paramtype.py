@@ -36,7 +36,10 @@ class ParamType:
         bool: (wx.CheckBox, False),
         "Size": (controls.SizeControl, None),
         "Point": (controls.PointControl, None),
-        "Array": (controls.InputImage, None),
+        "TermCriteria": (controls.TermCriteriaControl, None),
+        "Scalar": (controls.ScalarControl, None),
+        "Array": (controls.ArrayControl, None),
+        "ArrayOfArrays": (controls.ArrayControl, None),
         str: (wx.TextCtrl, "")
     }
     BUILT_IN_MAPS: ClassVar[Dict[str, str]] = {
@@ -44,6 +47,7 @@ class ParamType:
         "OutputArray": "Array",
         "InputArray": "Array",
         "Mat": "Array",
+        "OutputArrayOfArrays": "ArrayOfArrays",
         "String": "str"
     }
     MISSING_TYPES: ClassVar[Set[str]] = set()

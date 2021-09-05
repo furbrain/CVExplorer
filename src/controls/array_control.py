@@ -3,7 +3,7 @@ from typing import Optional
 import wx
 
 
-class InputImage(wx.ComboBox):
+class ArrayControl(wx.ComboBox):
     # noinspection PyShadowingBuiltins
     def __init__(self, parent, id):
         from functions import Function

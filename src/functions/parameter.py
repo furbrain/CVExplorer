@@ -1,4 +1,4 @@
-from typing import Any, Optional, ClassVar, Set
+from typing import Any, Optional, ClassVar, Set, Union, Type
 
 import attr
 import wx
@@ -15,7 +15,7 @@ class ParameterTemplate:
     MISSING_OUTPUT_TYPES: ClassVar[Set[str]] = set()
 
     name: str
-    type: ParamType = attr.ib(converter=ParamType.from_name)
+    type: Union[ParamType, str, Type] = attr.ib(converter=ParamType.from_name)
     description: str = ""
     default: Any = None
 

@@ -2,7 +2,6 @@ from controls.composite import CompositeControl
 
 
 class PointControl(CompositeControl):
-    # noinspection PyTypeChecker
     @classmethod
     def get_fields(cls):
         from functions import ParameterTemplate

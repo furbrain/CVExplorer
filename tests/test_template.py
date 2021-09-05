@@ -26,7 +26,7 @@ class TestFunctionTemplate(TestCase):
         self.func_template = FunctionTemplate(html.fromstring(self.filter_fragment, base_url=FIXTURES_FILTER_HTML))
         function = self.func_template.create_function()
         self.assertEqual(cv2.pyrDown, function.func)
-        self.assertListEqual(["dst"], [r.name for r in function.results])
+        self.assertListEqual(["dst1"], [r.name for r in function.results])
 
     def test_from_url(self):
         _, funcs = FunctionTemplate.from_url("d4/d86/group__imgproc__filter.html")
@@ -34,4 +34,4 @@ class TestFunctionTemplate(TestCase):
         with self.subTest("missing types"):
             self.assertSetEqual(set(), ParamType.MISSING_TYPES)
         with self.subTest("function count"):
-            self.assertEqual(24, len(funcs))
+            self.assertEqual(22, len(funcs))
