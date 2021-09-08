@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/tests/fixtures" />
+      <excludeFolder url="file://$MODULE_DIR$/src/htmlcov" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (CVExplorer)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

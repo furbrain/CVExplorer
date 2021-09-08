@@ -14,6 +14,10 @@ class DummyControl:
     def GetValue(self):
         return self.default
 
+    # noinspection PyPep8Naming
+    def GetCode(self):
+        return repr(self.default)
+
 
 class MockResult(OutputData):
     def __init__(self, name, data):

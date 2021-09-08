@@ -6,6 +6,7 @@ import wx
 
 from datatypes import ImageData
 from functions import Function, ParameterTemplate, ParamType
+from parser import DocumentParser
 from functions.template import FunctionTemplate
 from gui.basegui import CodeDialog
 from . import basegui
@@ -44,7 +45,7 @@ class CVEFrame(basegui.CVEFrame):
         self.Refresh()
 
     def add_menu_items(self):
-        title, funcs = FunctionTemplate.from_url("d4/d86/group__imgproc__filter.html")
+        title, funcs = DocumentParser("d4/d86/group__imgproc__filter.html").get_function_templates()
         menu = wx.Menu()
         for func in funcs:
             item: wx.MenuItem = menu.Append(wx.ID_ANY, func.name, "")
