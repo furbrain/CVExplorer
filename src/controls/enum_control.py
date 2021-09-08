@@ -24,12 +24,10 @@ class EnumControl(wx.Choice):
     def GetValue(self):
         index = self.GetSelection()
         result = self.GetClientData(index)
-        print(f"Getting value for index{index} result is {result}")
         return result
 
     # noinspection PyPep8Naming
     def SetValue(self, value: str):
-        print(f"enum setting value: {value}")
         if value is None:
             self.SetSelection(0)
         self.SetStringSelection(value)

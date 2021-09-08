@@ -4,6 +4,7 @@ import wx
 from wx.lib.agw.floatspin import FloatSpin
 
 
+# noinspection PyPep8Naming
 class IntControl(wx.SpinCtrl):
     def __init__(self, *args, **kw):
         if "min" not in kw:
@@ -20,16 +21,19 @@ class IntControl(wx.SpinCtrl):
         return str(self.GetValue())
 
 
+# noinspection PyPep8Naming
 class FloatControl(FloatSpin):
     def GetCode(self):
         return f"{self.GetValue():.3g}"
 
 
+# noinspection PyPep8Naming
 class BoolControl(wx.CheckBox):
     def GetCode(self):
         return repr(bool(self.GetValue()))
 
 
+# noinspection PyPep8Naming
 class TextControl(wx.TextCtrl):
     def GetCode(self):
         return repr(self.GetValue())

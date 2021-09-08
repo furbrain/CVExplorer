@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Any, Optional, TYPE_CHECKING
 
 from datatypes import OutputData
 from .parameter import ParameterTemplate
-from .paramtype import ParamControl
+from controls import ParamControl
 
 if TYPE_CHECKING:
     from gui import FunctionPane

@@ -1,4 +1,4 @@
-from typing import Type, Union, Dict, ClassVar, Any, Protocol, Tuple, Optional, Set
+from typing import Type, Union, Dict, ClassVar, Any, Tuple, Optional, Set
 
 import attr
 import wx
@@ -6,33 +6,12 @@ import wx
 import controls
 
 
-class ParamControl(Protocol):
-    # noinspection PyUnusedLocal,PyShadowingBuiltins
-    def __init__(self, parent: wx.Window, id: int):
-        ...
-
-    # noinspection PyPep8Naming
-    def SetValue(self, value: Any) -> None:
-        ...
-
-    # noinspection PyPep8Naming
-    def GetValue(self) -> Any:
-        ...
-
-    def GetCode(self) -> str:
-        ...
-
-    # noinspection PyPep8Naming
-    def SetToolTip(self, text: str) -> None:
-        ...
-
-
 @attr.s(auto_attribs=True)
 class ParamType:
     # Class level variables
     INITIALISED: ClassVar[bool] = False
     REGISTER: ClassVar[Dict[str, "ParamType"]] = {}
-    BUILT_INS: ClassVar[Dict[Union[Type, str], Tuple[ParamControl, Any]]] = {
+    BUILT_INS: ClassVar[Dict[Union[Type, str], Tuple[controls.ParamControl, Any]]] = {
         int: (controls.IntControl, "1"),
         float: (controls.FloatControl, 1.0),
         bool: (controls.BoolControl, False),
@@ -56,7 +35,7 @@ class ParamType:
     # instance variables
     name: str
     type: Union[str, Type]
-    input_ctrl: Type[ParamControl]
+    input_ctrl: Type[controls.ParamControl]
     default: Any = None
 
     def __attrs_post_init__(self):
@@ -77,12 +56,11 @@ class ParamType:
             cls.MISSING_TYPES.add(name)
             return None
 
-    def get_input_control(self, parent: wx.Window, default=None) -> ParamControl:
+    def get_input_control(self, parent: wx.Window, default=None) -> controls.ParamControl:
         ctrl = self.create_control(parent)
         if default is not None:
             ctrl.SetValue(default)
         else:
-            print("Type default", repr(self.default), repr(ctrl))
             ctrl.SetValue(self.default)
         return ctrl
 

@@ -54,11 +54,10 @@ class CVEFrame(basegui.CVEFrame):
 
     # noinspection PyUnusedLocal
     def add_func(self, func: FunctionTemplate, event):
-        print(f"Adding function {func.name}")
         self.add_pane_from_func(func.create_function())
 
     def exit(self, event):
-        self.Close()
+        self.Destroy()
 
 
 class CVExplorer(wx.App):

@@ -53,9 +53,7 @@ class Enum(ParamType):
             else:
                 values[name] = value
                 descriptions[name] = desc
-                print(name.upper())
                 if "DEFAULT" in name.upper():
-                    print("DEFAULT FOUND")
                     default = name
         if values and descriptions:
             enum = cls(title_text, title_text, EnumControl, default=default, values=values, descriptions=descriptions)

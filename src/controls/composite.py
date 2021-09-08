@@ -4,7 +4,7 @@ import wx
 
 if TYPE_CHECKING:
     from functions import ParameterTemplate
-    from functions.paramtype import ParamControl
+    from controls import ParamControl
 
 
 # noinspection PyPep8Naming
