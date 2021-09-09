@@ -7,7 +7,7 @@ class SizeControl(CompositeControl):
     def get_fields(cls):
         from functions import ParameterTemplate
         fields = [
-            ParameterTemplate("Width", int, default=3),
-            ParameterTemplate("Height", int, default=3)
+            ParameterTemplate("Width", "int", default=3),
+            ParameterTemplate("Height", "int", default=3)
         ]
         return fields

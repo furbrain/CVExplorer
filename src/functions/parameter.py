@@ -1,4 +1,4 @@
-from typing import Any, Union, Type
+from typing import Any
 
 import attr
 import wx
@@ -10,17 +10,23 @@ from functions.paramtype import ParamType
 class ParameterTemplate:
     """This represents a parameter for a function, but is not bound to any controls"""
     name: str
-    type: Union[ParamType, str, Type] = attr.ib(converter=ParamType.from_name)
+    type_name: str = attr.ib()
     description: str = ""
     default: Any = None
 
+    # noinspection PyUnusedLocal,PyUnresolvedReferences
+    @type_name.validator
+    def check_type(self, attribute, value):
+        if not ParamType.is_valid(value):
+            raise ValueError(f"Unknown Param Type: {value}")
+
     def is_valid(self) -> bool:
-        return bool(self.name and self.type)
+        return bool(self.name and self.type_name)
 
     def get_output_data(self):
-        return self.type.get_output_data(self.name)
+        return ParamType.from_name(self.type_name).get_output_data(self.name)
 
     def get_input_control(self, parent: wx.Window):
-        ctrl = self.type.get_input_control(parent, self.default)
+        ctrl = ParamType.from_name(self.type_name).get_input_control(parent, self.default)
         ctrl.SetToolTip(self.description)
         return ctrl

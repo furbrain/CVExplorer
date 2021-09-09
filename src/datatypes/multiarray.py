@@ -17,7 +17,7 @@ class MultiArrayData(ImageData):
     ]
 
     # set our params to be all of the params for the various array displayers
-    PARAMS = [ParameterTemplate("Index", int)] + [param for displayer in ARRAYDISPLAYERS for param in displayer.PARAMS]
+    PARAMS = [ParameterTemplate("Index", "int")] + [p for displayer in ARRAYDISPLAYERS for p in displayer.PARAMS]
 
     def __init__(self, name: str):
         super().__init__(name)

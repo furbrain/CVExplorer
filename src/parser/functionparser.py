@@ -3,7 +3,7 @@ from typing import Tuple, List, Dict
 
 from lxml import html
 
-from functions import ParamType, ParameterTemplate
+from functions import ParameterTemplate
 from functions.enum import Enum
 from functions.template import FunctionTemplate
 
@@ -44,14 +44,14 @@ class FunctionParser:
     def get_description_element(self, name: str) -> html.HtmlElement:
         return self.element.xpath(f".//table[@class='params']//td[@class='paramname' and text()='{name}']/../td[2]")[0]
 
-    def get_type(self, name: str) -> ParamType:
+    def get_type(self, name: str) -> str:
         if name == "retval":
             type_name = self.get_retval_typename()
         else:
             tp = self.get_type_element(name)
             name_element = self.get_default_element(name)
             type_name = self.get_type_from_elements(tp, name_element)
-        return ParamType.from_name(type_name)
+        return type_name
 
     @staticmethod
     def get_type_from_elements(tp: html.HtmlElement, default: html.HtmlElement) -> str:

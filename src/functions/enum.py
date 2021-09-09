@@ -56,7 +56,7 @@ class Enum(ParamType):
                 if "DEFAULT" in name.upper():
                     default = name
         if values and descriptions:
-            enum = cls(title_text, title_text, EnumControl, default=default, values=values, descriptions=descriptions)
+            enum = cls(title_text, title_text, default=default, values=values, descriptions=descriptions)
             cls.ANCHORS[anchor] = enum
             return enum
         else:

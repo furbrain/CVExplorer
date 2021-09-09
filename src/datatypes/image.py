@@ -4,10 +4,9 @@ import cv2
 import numpy as np
 import wx
 
+from functions.parameter import ParameterTemplate
 from . import ParamsInstance
 from .base import OutputData
-from functions.parameter import ParameterTemplate
-from functions.paramtype import ParamType
 
 
 class ArrayDisplayer:
@@ -24,8 +23,8 @@ class ArrayDisplayer:
 
 class ImageDisplayer(ArrayDisplayer):
     PARAMS = [
-        ParameterTemplate("AutoExpose", ParamType.from_name("bool"), "Equalise contrast", default=False),
-        ParameterTemplate("Brightness", ParamType.from_name("int"), "Adjust brightness, default=0")
+        ParameterTemplate("AutoExpose", "bool", "Equalise contrast", default=False),
+        ParameterTemplate("Brightness", "bool", "Adjust brightness, default=0")
     ]
 
     @staticmethod
@@ -79,7 +78,7 @@ class ImageData(OutputData):
     ]
 
     # set our params to be all of the params for the various array displayers
-    PARAMS = [param for displayer in ARRAYDISPLAYERS for param in displayer.PARAMS]
+    PARAMS = [p for displayer in ARRAYDISPLAYERS for p in displayer.PARAMS]
 
     def __init__(self, name: str):
         name = f"{name}{self.IMAGE_COUNTER}"

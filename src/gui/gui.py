@@ -5,10 +5,10 @@ import cv2
 import wx
 
 from datatypes import ImageData
-from functions import Function, ParameterTemplate, ParamType
-from parser import DocumentParser
+from functions import Function, ParameterTemplate
 from functions.template import FunctionTemplate
 from gui.basegui import CodeDialog
+from parser import DocumentParser
 from . import basegui
 from .pane import FunctionPane
 
@@ -30,7 +30,7 @@ class CVEFrame(basegui.CVEFrame):
                 return
         path = fd.GetPath()
         params: List[ParameterTemplate] = [
-            ParameterTemplate("filename", ParamType.from_name("str"), "Name of file to be loaded", default=path)]
+            ParameterTemplate("filename", "str", "Name of file to be loaded", default=path)]
         results = [ImageData("image")]
         func = Function("Load image", cv2.imread, params, results)
         self.add_pane_from_func(func)

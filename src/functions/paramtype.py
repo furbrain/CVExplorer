@@ -1,4 +1,4 @@
-from typing import Type, Union, Dict, ClassVar, Any, Tuple, Optional, Set
+from typing import Type, Union, Dict, ClassVar, Any, Optional, Set
 
 import attr
 import wx
@@ -6,36 +6,15 @@ import wx
 import controls
 
 
-@attr.s(auto_attribs=True)
+@attr.s(auto_attribs=True, slots=True)
 class ParamType:
     # Class level variables
     INITIALISED: ClassVar[bool] = False
     REGISTER: ClassVar[Dict[str, "ParamType"]] = {}
-    BUILT_INS: ClassVar[Dict[Union[Type, str], Tuple[controls.ParamControl, Any]]] = {
-        int: (controls.IntControl, "1"),
-        float: (controls.FloatControl, 1.0),
-        bool: (controls.BoolControl, False),
-        "Size": (controls.SizeControl, None),
-        "Point": (controls.PointControl, None),
-        "TermCriteria": (controls.TermCriteriaControl, None),
-        "Scalar": (controls.ScalarControl, None),
-        "Array": (controls.ArrayControl, None),
-        "ArrayOfArrays": (controls.ArrayControl, None),
-        str: (controls.TextControl, "")
-    }
-    BUILT_IN_MAPS: ClassVar[Dict[str, str]] = {
-        "double": "float",
-        "OutputArray": "Array",
-        "InputArray": "Array",
-        "Mat": "Array",
-        "OutputArrayOfArrays": "ArrayOfArrays",
-        "String": "str"
-    }
     MISSING_TYPES: ClassVar[Set[str]] = set()
     # instance variables
     name: str
     type: Union[str, Type]
-    input_ctrl: Type[controls.ParamControl]
     default: Any = None
 
     def __attrs_post_init__(self):
@@ -65,7 +44,7 @@ class ParamType:
         return ctrl
 
     def create_control(self, parent):
-        return self.input_ctrl(parent, id=wx.ID_ANY)
+        raise NotImplementedError
 
     def get_output_data(self, name: str):
         from datatypes import OutputData
@@ -74,11 +53,10 @@ class ParamType:
     @classmethod
     def initialise(cls):
         if not cls.INITIALISED:
-            for tp, (ctrl, default) in cls.BUILT_INS.items():
-                if isinstance(tp, str):
-                    cls(tp, tp, ctrl, default)
-                else:
-                    cls(tp.__name__, tp, ctrl, default)
-            for name, target in cls.BUILT_IN_MAPS.items():
-                cls.REGISTER[name] = cls.REGISTER[target]
+            from .builtintype import BuiltInType
+            BuiltInType.initialise_builtins()
             cls.INITIALISED = True
+
+    @classmethod
+    def is_valid(cls, name: str):
+        return bool(cls.from_name(name))
