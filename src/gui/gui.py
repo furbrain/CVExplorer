@@ -5,10 +5,10 @@ import cv2
 import wx
 
 from datatypes import ImageData
-from functions import Function, ParameterTemplate
+from functions import Function, ParameterTemplate, Module
 from functions.template import FunctionTemplate
 from gui.basegui import CodeDialog
-from parser import DocumentParser
+from parser.moduleparser import ModuleParser
 from . import basegui
 from .pane import FunctionPane
 
@@ -44,13 +44,20 @@ class CVEFrame(basegui.CVEFrame):
         self.Layout()
         self.Refresh()
 
-    def add_menu_items(self):
-        title, funcs = DocumentParser("d4/d86/group__imgproc__filter.html").get_function_templates()
+    def get_menu_from_module(self, module: Module) -> wx.Menu:
         menu = wx.Menu()
-        for func in funcs:
+        for func in module.functions:
             item: wx.MenuItem = menu.Append(wx.ID_ANY, func.name, "")
             self.Bind(wx.EVT_MENU, partial(self.add_func, func), id=item.GetId())
-        self.frame_menubar.Append(menu, title)
+        for child in module.children:
+            if child.count() > 0:
+                menu.AppendMenu(wx.ID_ANY, child.name, self.get_menu_from_module(child))
+        return menu
+
+    def add_menu_items(self):
+        root_module = ModuleParser().get_modules()
+        menu = self.get_menu_from_module(root_module)
+        self.frame_menubar.Append(menu, "Functions")
 
     # noinspection PyUnusedLocal
     def add_func(self, func: FunctionTemplate, event):
