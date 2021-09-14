@@ -5,7 +5,12 @@ from lxml import html
 
 from functions import ParameterTemplate
 from functions.enum import Enum
+from functions.paramtype import ParamTypeError
 from functions.template import FunctionTemplate
+
+
+class FunctionParserError(Exception):
+    pass
 
 
 class FunctionParser:
@@ -36,13 +41,24 @@ class FunctionParser:
         return name, input_vars, output_vars
 
     def get_type_element(self, name: str) -> html.HtmlElement:
-        return self.element.xpath(f".//td[@class='paramname']//em[text()='{name}']/../../td[@class ='paramtype']")[0]
+        try:
+            xpath = f".//td[@class='paramname']//em[text()='{name}']/../../td[@class ='paramtype']"
+            return self.element.xpath(xpath)[0]
+        except IndexError:
+            raise FunctionParserError(f"Cannot find type element for {name}")
 
     def get_default_element(self, name: str) -> html.HtmlElement:
-        return self.element.xpath(f".//td[@class='paramname']//em[text()='{name}']/..")[0]
+        try:
+            return self.element.xpath(f".//td[@class='paramname']//em[text()='{name}']/..")[0]
+        except IndexError:
+            raise FunctionParserError(f"Cannot find default element for {name}")
 
     def get_description_element(self, name: str) -> html.HtmlElement:
-        return self.element.xpath(f".//table[@class='params']//td[@class='paramname' and text()='{name}']/../td[2]")[0]
+        xpath = f".//table[@class='params']//td[@class='paramname' and text()='{name}']/../td[2]"
+        try:
+            return self.element.xpath(xpath)[0]
+        except IndexError:
+            raise FunctionParserError(f"Cannot find description element for {name}")
 
     def get_type(self, name: str) -> str:
         if name == "retval":
@@ -80,13 +96,9 @@ class FunctionParser:
 
     def get_description(self, name: str) -> str:
         try:
-            result = self.get_description_element(name).text_content()
-        except IndexError:
-            if name == "retval":
-                return ""
-            else:
-                raise
-        return result
+            return self.get_description_element(name).text_content()
+        except FunctionParserError:
+            return ""
 
     def get_parameter_template(self, name: str) -> ParameterTemplate:
         tp = self.get_type(name)
@@ -97,6 +109,10 @@ class FunctionParser:
         name, input_vars, output_vars = self.get_signature()
         if name is None:
             return None
-        inputs = [self.get_parameter_template(name) for name in input_vars]
-        outputs = [self.get_parameter_template(name) for name in output_vars]
+        try:
+            inputs = [self.get_parameter_template(name) for name in input_vars]
+            outputs = [self.get_parameter_template(name) for name in output_vars]
+        except (FunctionParserError, ParamTypeError) as e:
+            print(f"Error parsing function {name}: {e}")
+            return None
         return FunctionTemplate(name, inputs, outputs)

@@ -25,9 +25,18 @@ class BuiltInType(ParamType):
         "double": "float",
         "OutputArray": "Array",
         "InputArray": "Array",
+        "InputOutputArray": "Array",
+        "SparseMat": "Array",
         "Mat": "Array",
+        "UMat": "Array",
+        "AsyncArray": "Array",
         "OutputArrayOfArrays": "ArrayOfArrays",
-        "String": "str"
+        "String": "str",
+        "char": "str",
+        "Point2f": "Point",
+        "Point2d": "Point",
+        "size_t": "int",
+        "Size2d": "Size"
     }
     input_ctrl: Type[controls.ParamControl] = None
 

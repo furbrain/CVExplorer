@@ -3,7 +3,7 @@ from typing import Any
 import attr
 import wx
 
-from functions.paramtype import ParamType
+from functions.paramtype import ParamType, ParamTypeError
 
 
 @attr.s(auto_attribs=True)
@@ -18,7 +18,7 @@ class ParameterTemplate:
     @type_name.validator
     def check_type(self, attribute, value):
         if not ParamType.is_valid(value):
-            raise ValueError(f"Unknown Param Type: {value}")
+            raise ParamTypeError(f"Unknown Param Type: {value}")
 
     def is_valid(self) -> bool:
         return bool(self.name and self.type_name)

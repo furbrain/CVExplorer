@@ -2,8 +2,8 @@ from typing import List, Tuple, ClassVar
 
 from lxml import html
 
-from parser.functionparser import FunctionParser
-from functions.template import FunctionTemplate
+from .functionparser import FunctionParser
+from functions import FunctionTemplate
 
 
 class DocumentParser:

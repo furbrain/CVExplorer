@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import wx
 
-from functions.parameter import ParameterTemplate
+from functions import ParameterTemplate
 from . import ParamsInstance
 from .base import OutputData
 

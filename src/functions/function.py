@@ -1,17 +1,17 @@
 from typing import Callable, Dict, List, Any, Optional, TYPE_CHECKING
 
-from datatypes import OutputData
 from .parameter import ParameterTemplate
 from controls import ParamControl
 
 if TYPE_CHECKING:
     from gui import FunctionPane
+    from datatypes import OutputData
 
 
 class Function:
     ALL: List["Function"] = []
 
-    def __init__(self, name: str, func: Callable, params: List[ParameterTemplate], results: List[OutputData]):
+    def __init__(self, name: str, func: Callable, params: List[ParameterTemplate], results: List["OutputData"]):
         self.name = name
         self.func = func
         self.param_template = params
