@@ -26,6 +26,7 @@ class TestFunctionTemplate(TestCase):
     def test_create_function(self):
         self.func_template = FunctionTemplate(
             name="pyrDown",
+            module="cv2",
             inputs=[
                 ParameterTemplate("src", "InputArray")
             ],

@@ -8,6 +8,7 @@ from datatypes import ImageData
 from functions import Function, ParameterTemplate, Module
 from functions.template import FunctionTemplate
 from gui.basegui import CodeDialog
+from parser.codeparser import CodeParser
 from parser.moduleparser import ModuleParser
 from . import basegui
 from .pane import FunctionPane
@@ -58,6 +59,9 @@ class CVEFrame(basegui.CVEFrame):
         root_module = ModuleParser().get_modules()
         menu = self.get_menu_from_module(root_module)
         self.frame_menubar.Append(menu, "Functions")
+        utils_module = CodeParser().get_modules()
+        utils_menu = self.get_menu_from_module(utils_module)
+        self.frame_menubar.Append(utils_menu, "Utils")
 
     # noinspection PyUnusedLocal
     def add_func(self, func: FunctionTemplate, event):

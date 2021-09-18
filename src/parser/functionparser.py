@@ -115,4 +115,4 @@ class FunctionParser:
         except (FunctionParserError, ParamTypeError) as e:
             print(f"Error parsing function {name}: {e}")
             return None
-        return FunctionTemplate(name, inputs, outputs)
+        return FunctionTemplate(name, "cv2", inputs, outputs)

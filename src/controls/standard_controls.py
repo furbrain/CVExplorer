@@ -9,6 +9,8 @@ class IntControl(wx.SpinCtrl):
     def __init__(self, *args, **kw):
         if "min" not in kw:
             kw["min"] = -1
+        if "max" not in kw:
+            kw["max"] = 10 ** 10
         super().__init__(*args, **kw)
 
     def SetValue(self, value: Any):

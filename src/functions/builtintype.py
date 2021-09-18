@@ -9,6 +9,24 @@ import controls
 
 @attr.s(auto_attribs=True, slots=True)
 class BuiltInType(ParamType):
+    BUILT_IN_MAPS: ClassVar[Dict[str, str]] = {
+        "double": "float",
+        "OutputArray": "Array",
+        "InputArray": "Array",
+        "InputOutputArray": "Array",
+        "SparseMat": "Array",
+        "Mat": "Array",
+        "UMat": "Array",
+        "AsyncArray": "Array",
+        "ndarray": "Array",
+        "OutputArrayOfArrays": "ArrayOfArrays",
+        "String": "str",
+        "char": "str",
+        "Point2f": "Point",
+        "Point2d": "Point",
+        "size_t": "int",
+        "Size2d": "Size"
+    }
     BUILT_INS: ClassVar[Dict[Union[Type, str], Tuple[controls.ParamControl, Any]]] = {
         int: (controls.IntControl, "1"),
         float: (controls.FloatControl, 1.0),
@@ -20,23 +38,6 @@ class BuiltInType(ParamType):
         "Array": (controls.ArrayControl, None),
         "ArrayOfArrays": (controls.ArrayControl, None),
         str: (controls.TextControl, "")
-    }
-    BUILT_IN_MAPS: ClassVar[Dict[str, str]] = {
-        "double": "float",
-        "OutputArray": "Array",
-        "InputArray": "Array",
-        "InputOutputArray": "Array",
-        "SparseMat": "Array",
-        "Mat": "Array",
-        "UMat": "Array",
-        "AsyncArray": "Array",
-        "OutputArrayOfArrays": "ArrayOfArrays",
-        "String": "str",
-        "char": "str",
-        "Point2f": "Point",
-        "Point2d": "Point",
-        "size_t": "int",
-        "Size2d": "Size"
     }
     input_ctrl: Type[controls.ParamControl] = None
 
