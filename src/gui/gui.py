@@ -37,9 +37,9 @@ class CVEFrame(basegui.CVEFrame):
         self.add_pane_from_func(func)
 
     def add_pane_from_func(self, func):
-        pane = FunctionPane(self.notebook_1)
+        pane = FunctionPane(self.notebook)
         func.instantiate(pane)
-        self.notebook_1.AddPage(pane, func.name, True)
+        self.notebook.AddPage(pane, func.name, True)
         func.on_changed(None)
         pane.Refresh()
         self.Layout()
