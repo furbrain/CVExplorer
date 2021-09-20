@@ -39,7 +39,7 @@ class BuiltInType(ParamType):
         "ArrayOfArrays": (controls.ArrayControl, None),
         str: (controls.TextControl, "")
     }
-    input_ctrl: Type[controls.ParamControl] = None
+    input_ctrl: Type[controls.InnerParamControl] = None
 
     def create_control(self, parent):
         return self.input_ctrl(parent, id=wx.ID_ANY)

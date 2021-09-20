@@ -30,7 +30,8 @@ class EnumControl(wx.Choice):
     def SetValue(self, value: str):
         if value is None:
             self.SetSelection(0)
-        self.SetStringSelection(value)
+        else:
+            self.SetStringSelection(value)
 
     def SetToolTip(self, text: str):
         if text:

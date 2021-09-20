@@ -60,13 +60,13 @@ class ParamType:
             cls.MISSING_TYPES.add(name)
             return None
 
-    def get_input_control(self, parent: wx.Window, default=None) -> controls.ParamControl:
+    def get_input_control(self, parent: wx.Window, default=None) -> "ParamControl":
         ctrl = self.create_control(parent)
         if default is not None:
             ctrl.SetValue(default)
         else:
             ctrl.SetValue(self.default)
-        return ctrl
+        return ControlWrapper(parent, ctrl)
 
     def create_control(self, parent):
         raise NotImplementedError

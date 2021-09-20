@@ -1,3 +1,4 @@
+import typing
 from functools import partial
 from typing import Callable, Optional, Union, List
 
@@ -5,8 +6,9 @@ import numpy as np
 import wx
 import wx.dataview
 
-from datatypes.base import ParamsInstance
-from functions import ParameterTemplate
+if typing.TYPE_CHECKING:
+    from datatypes.base import ParamsInstance
+    from functions import ParameterTemplate
 from gui.basegui import FunctionPaneBase
 
 EVENTS = [
@@ -32,26 +34,26 @@ class FunctionPane(FunctionPaneBase):
         for c in self.results_controls:
             c.Hide()
 
-    def instantiate_params(self, params: List[ParameterTemplate]) -> ParamsInstance:
+    def instantiate_params(self, params: List["ParameterTemplate"]) -> "ParamsInstance":
         return {x.name: x.get_input_control(self.params_pane) for x in params}
 
     @staticmethod
     def show_control(control: wx.Window, shown: wx.ShowEvent) -> None:
         control.Show(shown.IsShown())
 
-    def add_param_controls_to_sizer(self, controls: ParamsInstance, sizer: wx.FlexGridSizer):
+    def add_param_controls_to_sizer(self, controls: "ParamsInstance", sizer: wx.FlexGridSizer):
         for name, control in controls.items():
             text = wx.StaticText(self.params_pane, wx.ID_ANY, name)
             sizer.Add(text, 0, wx.EXPAND | wx.ALL, 3)
             sizer.Add(control, 1, wx.EXPAND | wx.ALL, 3)
             control.Bind(wx.EVT_SHOW, partial(self.show_control, text))
 
-    def add_input_params(self, params: List[ParameterTemplate]) -> ParamsInstance:
+    def add_input_params(self, params: List["ParameterTemplate"]) -> "ParamsInstance":
         controls = self.instantiate_params(params)
         self.add_param_controls_to_sizer(controls, self.input_param_sizer)
         return controls
 
-    def add_output_params(self, name: str, params: List[ParameterTemplate]) -> ParamsInstance:
+    def add_output_params(self, name: str, params: List["ParameterTemplate"]) -> "ParamsInstance":
         sizer = wx.FlexGridSizer(2, 0, 3)
         controls = self.instantiate_params(params)
         self.add_param_controls_to_sizer(controls, sizer)
