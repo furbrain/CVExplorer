@@ -6,8 +6,9 @@ from gui.basegui import WrapperBase
 from controls.control_type import ParamControl
 
 
+# noinspection PyPep8Naming
 class ControlWrapper(WrapperBase):
-    def __init__(self, parent: wx.Window, ctrl: ParamControl):
+    def __init__(self, parent: wx.Window, ctrl: ParamControl = None):
         super().__init__(parent, wx.ID_ANY)
         self.ctrl = ctrl
         self.ctrl.Reparent(self)
@@ -45,4 +46,3 @@ class ControlWrapper(WrapperBase):
         self.toggle_code.SetToolTip(text)
         self.code.SetToolTip(text)
         self.ctrl.SetToolTip(text)
-

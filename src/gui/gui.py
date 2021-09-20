@@ -1,11 +1,14 @@
+import os.path
 from functools import partial
 from typing import List
 
 import cv2
 import wx
 
+from common import get_config_filename
 from datatypes import ImageData
 from functions import Function, ParameterTemplate, Module
+from functions.enum import Enum
 from functions.template import FunctionTemplate
 from gui.basegui import CodeDialog
 from parser.codeparser import CodeParser
@@ -56,7 +59,23 @@ class CVEFrame(basegui.CVEFrame):
         return menu
 
     def add_menu_items(self):
-        root_module = ModuleParser().get_modules()
+        func_fname = get_config_filename("functions")
+        enum_fname = get_config_filename("enums")
+        try:
+            with open(enum_fname, "r") as f:
+                Enum.load(f)
+            with open(func_fname, "r") as f:
+                root_module = Module.load(f)
+        except IOError:
+            root_module = ModuleParser().get_modules()
+            try:
+                os.makedirs(os.path.dirname(func_fname), exist_ok=True)
+                with open(enum_fname, "w") as f:
+                    Enum.save(f)
+                with open(func_fname, "w") as f:
+                    root_module.save(f)
+            except IOError as e:
+                wx.MessageBox(f"Can't save parsed function data {e}")
         menu = self.get_menu_from_module(root_module)
         self.frame_menubar.Append(menu, "Functions")
         utils_module = CodeParser().get_modules()

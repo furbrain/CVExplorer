@@ -6,3 +6,5 @@ mock>=4.0.3
 sphinx-py3doc-enhanced-theme>=2.4.0
 lxml>=4.6.3
 attrs>=21.2.0
+appdirs>=1.4.4
+cattrs>=1.8.0

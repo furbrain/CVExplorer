@@ -1,9 +1,11 @@
+import json
 import re
-from typing import Dict, Optional, ClassVar
+from typing import Dict, Optional, ClassVar, IO, List
 
 import attr
 import cv2
 import wx
+from cattr.preconf.json import make_converter
 from lxml import html
 
 from controls.enum_control import EnumControl
@@ -22,6 +24,21 @@ class Enum(ParamType):
     @staticmethod
     def remove_symbols(text: str):
         return re.sub(r"\W+", "", text)
+
+    @classmethod
+    def save(cls, f: IO):
+        converter = make_converter()
+        attr.resolve_types(cls)
+        all_enums = [x for x in cls.REGISTER.values() if isinstance(x, cls)]
+        raw_list = converter.unstructure(all_enums)
+        json.dump(raw_list, f, indent=2)
+
+    @classmethod
+    def load(cls, f: IO):
+        converter = make_converter()
+        attr.resolve_types(cls)
+        raw_list = json.load(f)
+        converter.structure(raw_list, List[cls])
 
     @classmethod
     def from_url(cls, url: str) -> Optional["Enum"]:

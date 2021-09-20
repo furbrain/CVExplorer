@@ -1,13 +1,15 @@
-import json
-from pprint import pprint
+import os.path
 
-from parser import DocumentParser
-from cattr.preconf.json import make_converter
+import common
+from functions.enum import Enum
+from parser import ModuleParser
 
-MODULE_ROOT = "/usr/share/doc/opencv-doc/opencv4/html/modules.html"
-IMG_PROC = "/usr/share/doc/opencv-doc/opencv4/html/d4/d86/group__imgproc__filter.html"
-results = DocumentParser(IMG_PROC, absolute=True).get_function_templates()
-converter = make_converter()
-data = converter.unstructure(results)
-pprint(data)
-print(json.dumps(data, indent=4))
+mod = ModuleParser().get_modules()
+fname = common.get_config_filename("functions")
+os.makedirs(os.path.dirname(fname), exist_ok=True)
+print(f"saving data to {fname}")
+with open(fname, "w") as f:
+    mod.save(f)
+fname = common.get_config_filename("enums")
+with open(fname, "w") as f:
+    Enum.save(f)
