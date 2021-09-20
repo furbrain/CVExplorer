@@ -47,9 +47,6 @@ class BuiltInType(ParamType):
     @classmethod
     def initialise_builtins(cls):
         for tp, (ctrl, default) in cls.BUILT_INS.items():
-            if isinstance(tp, str):
-                cls(tp, tp, default, ctrl)
-            else:
-                cls(tp.__name__, tp, default, ctrl)
+            cls(tp, default, ctrl)
         for name, target in cls.BUILT_IN_MAPS.items():
             cls.REGISTER[name] = cls.REGISTER[target]

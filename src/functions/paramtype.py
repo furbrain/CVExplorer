@@ -3,11 +3,18 @@ from typing import Type, Union, Dict, ClassVar, Any, Optional, Set, List
 import attr
 import wx
 
-import controls
+from controls import ControlWrapper, ParamControl
 
 
 class ParamTypeError(Exception):
     pass
+
+
+def cls2str(value: Union[str, Type]) -> str:
+    if isinstance(value, str):
+        return value
+    if isinstance(value, type):
+        return value.__name__
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -23,8 +30,7 @@ class ParamType:
         "&"
     ]
     # instance variables
-    name: str
-    type: Union[str, Type]
+    name: str = attr.ib(converter=cls2str)
     default: Any = None
 
     def __attrs_post_init__(self):
@@ -67,7 +73,7 @@ class ParamType:
 
     def get_output_data(self, name: str):
         from datatypes import OutputData
-        return OutputData.from_type(self.type, name)
+        return OutputData.from_type(self.name, name)
 
     @classmethod
     def initialise(cls):
