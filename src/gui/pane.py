@@ -1,14 +1,17 @@
 import typing
 from functools import partial
-from typing import Callable, Optional, Union, List
+from typing import Union, List
 
 import numpy as np
 import wx
 import wx.dataview
 
+from controls import get_control_from_type
+from functions import Function, ParamType
+
 if typing.TYPE_CHECKING:
     from datatypes.base import ParamsInstance
-    from functions import ParameterTemplate
+    from functions import ParameterTemplate, Function
 from gui.basegui import FunctionPaneBase
 
 EVENTS = [
@@ -25,17 +28,25 @@ EVENTS = [
 
 # noinspection PyUnusedLocal
 class FunctionPane(FunctionPaneBase):
-    def __init__(self, nb: wx.Notebook):
+    def __init__(self, nb: wx.Notebook, func: Function):
         super().__init__(nb)
-        self.change_handler: Optional[Callable] = None
+        self.func = func
         self.results_controls = [self.results_matrix, self.results_text, self.results_bitmap]
         for evt in EVENTS:
             self.Bind(evt, self.on_change)
-        for c in self.results_controls:
-            c.Hide()
+
+        self.params: "ParamsInstance" = self.add_input_params(self.func.param_template)
+        for result in self.func.results:
+            result.params = self.add_output_params(result.name, result.PARAMS)
+
+    def get_input_control(self, param: "ParameterTemplate"):
+        tp = ParamType.from_name(param.type_name)
+        ctrl = get_control_from_type(self.params_pane, tp, param.default)
+        ctrl.SetToolTip(param.description)
+        return ctrl
 
     def instantiate_params(self, params: List["ParameterTemplate"]) -> "ParamsInstance":
-        return {x.name: x.get_input_control(self.params_pane) for x in params}
+        return {x.name: self.get_input_control(x) for x in params}
 
     @staticmethod
     def show_control(control: wx.Window, shown: wx.ShowEvent) -> None:
@@ -87,9 +98,21 @@ class FunctionPane(FunctionPaneBase):
         self.Refresh()
         self.Layout()
 
-    def register_change_handler(self, func: Callable):
-        self.change_handler = func
+    def on_change(self, event=None):
+        try:
+            self.call_func()
+            results = self.func.get_result(0)
+        except Exception as e:
+            self.set_display(e)
+            raise e
+        else:
+            self.set_display(results)
+        self.Refresh()
 
-    def on_change(self, event):
-        if self.change_handler:
-            self.change_handler()
+    def call_func(self):
+        args = {name: ctrl.GetValue() for name, ctrl in self.params.items()}
+        self.func.call(args)
+
+    def get_code(self):
+        args = {name: ctrl.GetCode() for name, ctrl in self.params.items()}
+        return self.func.as_code(args)

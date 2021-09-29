@@ -4,12 +4,10 @@ from typing import Dict, Optional, ClassVar, IO, List
 
 import attr
 import cv2
-import wx
 from cattr.preconf.json import make_converter
 from lxml import html
 
-from controls.enum_control import EnumControl
-from functions.paramtype import ParamType
+from .paramtype import ParamType
 
 
 @attr.s(auto_attribs=True)
@@ -17,9 +15,6 @@ class Enum(ParamType):
     ANCHORS: ClassVar[Dict[str, "Enum"]] = {}
     values: Dict[str, int] = {}
     descriptions: Dict[str, str] = {}
-
-    def create_control(self, parent):
-        return EnumControl(parent, wx.ID_ANY, self)
 
     @staticmethod
     def remove_symbols(text: str):

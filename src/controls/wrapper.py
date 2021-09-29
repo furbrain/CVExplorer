@@ -1,16 +1,17 @@
 from typing import Any
 
 import wx
-from gui.basegui import WrapperBase
 
-from controls.control_type import ParamControl
+from functions import ParamType
+from gui.basegui import WrapperBase
 
 
 # noinspection PyPep8Naming
 class ControlWrapper(WrapperBase):
-    def __init__(self, parent: wx.Window, ctrl: ParamControl = None):
+    def __init__(self, parent: wx.Window, tp: ParamType):
+        from .control_factory import get_control_from_type
         super().__init__(parent, wx.ID_ANY)
-        self.ctrl = ctrl
+        self.ctrl = get_control_from_type(self, tp)
         self.ctrl.Reparent(self)
         self.sizer.Add(self.ctrl, 1, wx.ALL, 3)
         self.sizer.Fit(self)
@@ -46,3 +47,4 @@ class ControlWrapper(WrapperBase):
         self.toggle_code.SetToolTip(text)
         self.code.SetToolTip(text)
         self.ctrl.SetToolTip(text)
+

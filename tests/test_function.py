@@ -1,9 +1,9 @@
 from unittest import TestCase, mock
-from unittest.mock import call, Mock
+from unittest.mock import Mock
 
-import gui
 from datatypes import OutputData
 from functions import Function, ParameterTemplate
+from gui.pane import FunctionPane
 
 
 class DummyControl:
@@ -34,7 +34,7 @@ class TestFunction(TestCase):
         """reset all properties of Function class"""
         Function.ALL = []
         self.function_list = []
-        self.pane: Mock = mock.create_autospec(gui.FunctionPane)
+        self.pane: Mock = mock.create_autospec(FunctionPane)
 
     def createFixtures(self):
         self.f1 = Function("Function1", Mock(return_value=(0, 2)), [
@@ -67,32 +67,13 @@ class TestFunction(TestCase):
                                                        "result": 2,
                                                        "result2": 3})
 
-    def test_instantiate(self):
-        self.createFixtures()
-        self.f1.instantiate(self.pane)
-        self.pane.add_input_params.assert_called_with(self.f1.param_template)
-        self.assertListEqual(self.pane.add_output_params.mock_calls, [call(x.name, x.PARAMS) for x in self.f1.results])
-        self.pane.register_change_handler.assert_called_with(self.f1.on_changed)
-
-    def test_on_changed(self):
-        self.createFixtures()
-        self.f1.instantiate(self.pane)
-        self.f1.on_changed()
-        # noinspection PyUnresolvedReferences
-        self.f1.func.assert_called_once()
-        self.pane.set_display.assert_called_with(None)
-
     def test_call(self):
         self.createFixtures()
-        self.f1.call()
+        self.f1.call({})
         # noinspection PyUnresolvedReferences
         self.f1.func.assert_called_once()
 
     def test_get_code(self):
-        def mock_input_params(params):
-            return {x.name: DummyControl(x.default) for x in params}
-
         self.createFixtures()
-        self.pane.add_input_params.side_effect = mock_input_params
-        self.f1.instantiate(self.pane)
-        self.assertEqual("image1, result = cv2.Function1(filename='filename.jpg', mode=1)", self.f1.as_code())
+        params = {"filename": "'filename.jpg'", "mode": "1"}
+        self.assertEqual("image1, result = cv2.Function1(filename='filename.jpg', mode=1)", self.f1.as_code(params))

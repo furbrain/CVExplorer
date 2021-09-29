@@ -1,9 +1,6 @@
 from typing import Type, Union, Dict, ClassVar, Any, Optional, Set, List
 
 import attr
-import wx
-
-from controls import ControlWrapper, ParamControl
 
 
 class ParamTypeError(Exception):
@@ -59,17 +56,6 @@ class ParamType:
             print(f"Missing {name}:")
             cls.MISSING_TYPES.add(name)
             return None
-
-    def get_input_control(self, parent: wx.Window, default=None) -> "ParamControl":
-        ctrl = self.create_control(parent)
-        if default is not None:
-            ctrl.SetValue(default)
-        else:
-            ctrl.SetValue(self.default)
-        return ControlWrapper(parent, ctrl)
-
-    def create_control(self, parent):
-        raise NotImplementedError
 
     def get_output_data(self, name: str):
         from datatypes import OutputData

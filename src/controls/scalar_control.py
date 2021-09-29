@@ -1,5 +1,5 @@
 # noinspection PyPep8Naming
-from controls.composite import CompositeControl
+from .composite import CompositeControl
 
 
 class ScalarControl(CompositeControl):

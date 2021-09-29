@@ -1,1 +1,0 @@
-from .pane import FunctionPane

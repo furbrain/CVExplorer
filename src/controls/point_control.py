@@ -1,4 +1,4 @@
-from controls.composite import CompositeControl
+from .composite import CompositeControl
 
 
 class PointControl(CompositeControl):
@@ -6,7 +6,7 @@ class PointControl(CompositeControl):
     def get_fields(cls):
         from functions import ParameterTemplate
         fields = [
-            ParameterTemplate("Width", "int", default=-1),
-            ParameterTemplate("Height", "int", default=-1)
+            ParameterTemplate("X", "int", default=-1),
+            ParameterTemplate("Y", "int", default=-1)
         ]
         return fields

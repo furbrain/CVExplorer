@@ -1,10 +1,10 @@
-from typing import List, TYPE_CHECKING, Dict, Type, ClassVar
+from typing import List, Dict, Type, ClassVar
 
 import wx
 
-if TYPE_CHECKING:
-    from functions import ParameterTemplate
-    from controls import ParamControl
+from functions import ParameterTemplate
+from .wrapper import ControlWrapper
+from .control_type import ParamControl
 
 
 # noinspection PyPep8Naming
@@ -18,7 +18,7 @@ class CompositeControl(wx.Panel):
         self.controls: Dict[str, ParamControl] = {}
         for field in self.FIELDS:
             self.sizer.Add(wx.StaticText(self, label=field.name), )
-            self.controls[field.name] = field.get_input_control(self)
+            self.controls[field.name] = ControlWrapper(self, field.get_type())
             self.sizer.Add(self.controls[field.name])
         self.SetSizer(self.sizer)
 
@@ -40,11 +40,11 @@ class CompositeControl(wx.Panel):
         return type(name, (cls,), {"FIELDS": params})
 
     @classmethod
-    def get_fields(cls):
+    def get_fields(cls) -> List["ParameterTemplate"]:
         raise NotImplementedError
 
     @property
-    def FIELDS(self):
+    def FIELDS(self) -> List["ParameterTemplate"]:
         if not self._FIELDS:
             self._FIELDS = self.get_fields()
         return self._FIELDS

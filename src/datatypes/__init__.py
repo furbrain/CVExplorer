@@ -1,3 +1,3 @@
-from .base import OutputData, ParamsTemplate, ParamsInstance
+from .base import OutputData
 from .boolean import BooleanData
 from .image import ImageData

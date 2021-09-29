@@ -1,14 +1,25 @@
-from typing import ClassVar, Dict, Union, Type, Tuple, Any
+from typing import ClassVar, Dict, Union, Type, Any
 
 import attr
-import wx
 
 from functions import ParamType
-import controls
 
 
 @attr.s(auto_attribs=True, slots=True)
 class BuiltInType(ParamType):
+    DEFAULTS: ClassVar[Dict[Union[Type, str], Any]] = {
+        int: "1",
+        float: 1.0,
+        bool: False,
+        "Size": None,
+        "Point": None,
+        "TermCriteria": None,
+        "Scalar": None,
+        "Array": None,
+        "ArrayOfArrays": None,
+        str: ""
+    }
+
     BUILT_IN_MAPS: ClassVar[Dict[str, str]] = {
         "double": "float",
         "OutputArray": "Array",
@@ -27,26 +38,10 @@ class BuiltInType(ParamType):
         "size_t": "int",
         "Size2d": "Size"
     }
-    BUILT_INS: ClassVar[Dict[Union[Type, str], Tuple[controls.ParamControl, Any]]] = {
-        int: (controls.IntControl, "1"),
-        float: (controls.FloatControl, 1.0),
-        bool: (controls.BoolControl, False),
-        "Size": (controls.SizeControl, None),
-        "Point": (controls.PointControl, None),
-        "TermCriteria": (controls.TermCriteriaControl, None),
-        "Scalar": (controls.ScalarControl, None),
-        "Array": (controls.ArrayControl, None),
-        "ArrayOfArrays": (controls.ArrayControl, None),
-        str: (controls.TextControl, "")
-    }
-    input_ctrl: Type[controls.InnerParamControl] = None
-
-    def create_control(self, parent):
-        return self.input_ctrl(parent, id=wx.ID_ANY)
 
     @classmethod
     def initialise_builtins(cls):
-        for tp, (ctrl, default) in cls.BUILT_INS.items():
-            cls(tp, default, ctrl)
+        for tp,  default in cls.DEFAULTS.items():
+            cls(tp, default)
         for name, target in cls.BUILT_IN_MAPS.items():
             cls.REGISTER[name] = cls.REGISTER[target]

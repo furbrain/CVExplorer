@@ -5,7 +5,7 @@ import numpy as np
 import wx
 
 from functions import ParameterTemplate
-from . import ParamsInstance
+from controls import ParamsInstance
 from .base import OutputData
 
 

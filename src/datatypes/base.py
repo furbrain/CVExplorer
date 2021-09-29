@@ -1,5 +1,6 @@
 import typing
-from typing import Union, Dict, Tuple, Type, Any, Protocol, ClassVar, List
+from typing import Union, Type, Any, ClassVar, List
+from controls import ParamsInstance
 
 import numpy as np
 import wx
@@ -10,21 +11,6 @@ if typing.TYPE_CHECKING:
 
 class BaseParameter:
     pass
-
-
-# noinspection PyPep8Naming
-class SupportsGetValue(Protocol):
-    def GetValue(self) -> Any:
-        ...
-
-    def Command(self, event: wx.CommandEvent) -> None:
-        pass
-
-
-Control = Union[wx.Control, SupportsGetValue]
-
-ParamsTemplate = Dict[str, Tuple[Type[Control], Dict[str, Any]]]
-ParamsInstance = Dict[str, Control]
 
 
 class OutputData:

@@ -1,9 +1,8 @@
 from typing import Any
 
 import attr
-import wx
 
-from functions.paramtype import ParamType, ParamTypeError
+from .paramtype import ParamType, ParamTypeError
 
 
 @attr.s(auto_attribs=True)
@@ -23,10 +22,9 @@ class ParameterTemplate:
     def is_valid(self) -> bool:
         return bool(self.name and self.type_name)
 
-    def get_output_data(self):
-        return ParamType.from_name(self.type_name).get_output_data(self.name)
+    def get_type(self):
+        return ParamType.from_name(self.type_name)
 
-    def get_input_control(self, parent: wx.Window):
-        ctrl = ParamType.from_name(self.type_name).get_input_control(parent, self.default)
-        ctrl.SetToolTip(self.description)
-        return ctrl
+    def get_output_data(self):
+        return self.get_type().get_output_data(self.name)
+

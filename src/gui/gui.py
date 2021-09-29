@@ -19,8 +19,11 @@ from .pane import FunctionPane
 
 class CVEFrame(basegui.CVEFrame):
 
+    def get_all_panes(self) -> List[FunctionPane]:
+        return[self.notebook.GetPage(i) for i in range(self.notebook.PageCount)]
+
     def generate_code(self, event):
-        text = '\n'.join(func.as_code() for func in Function.ALL)
+        text = '\n'.join(pane.get_code() for pane in self.get_all_panes())
         dlg = CodeDialog(None)
         dlg.text.SetValue("import cv2\n\n" + text)
         dlg.Show()
@@ -40,10 +43,9 @@ class CVEFrame(basegui.CVEFrame):
         self.add_pane_from_func(func)
 
     def add_pane_from_func(self, func):
-        pane = FunctionPane(self.notebook)
-        func.instantiate(pane)
+        pane = FunctionPane(self.notebook, func)
         self.notebook.AddPage(pane, func.name, True)
-        func.on_changed(None)
+        pane.on_change()
         pane.Refresh()
         self.Layout()
         self.Refresh()
