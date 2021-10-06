@@ -21,8 +21,9 @@ class DocumentParser:
             "//a[@name='func-members']/ancestor::table/descendant::tr[starts-with(@class,'memitem')]")
         for tr in func_table:
             guid = tr.get('class').replace("memitem:", "")
+            url = self.tree.getroot().base_url+"#"+guid
             func_definition = self.tree.xpath(f"//a[@id='{guid}']/following::div")
-            f = FunctionParser(func_definition[0]).get_function_template()
+            f = FunctionParser(func_definition[0], url=url).get_function_template()
             if f is not None:
                 funcs.append(f)
         return title[0].text, funcs

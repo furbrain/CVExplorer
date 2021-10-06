@@ -15,8 +15,9 @@ class FunctionParserError(Exception):
 
 class FunctionParser:
 
-    def __init__(self, element: html.HtmlElement):
+    def __init__(self, element: html.HtmlElement, url):
         self.element: html.HtmlElement = element
+        self.url = url
 
     def get_signature(self) -> Tuple[str, List[str], List[str]]:
         python_row = self.element.find("*/table[@class='python_language']//tr[2]")
@@ -111,8 +112,8 @@ class FunctionParser:
             return None
         try:
             inputs = [self.get_parameter_template(name) for name in input_vars]
-            outputs = [self.get_parameter_template(name) for name in output_vars]
+            outputs = [self.get_parameter_template(name) for name in output_vars if name is not "None"]
         except (FunctionParserError, ParamTypeError) as e:
             print(f"Error parsing function {name}: {e}")
             return None
-        return FunctionTemplate(name, "cv2", inputs, outputs)
+        return FunctionTemplate(name, "cv2", inputs, outputs, self.url)

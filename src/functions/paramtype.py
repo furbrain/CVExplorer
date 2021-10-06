@@ -57,10 +57,6 @@ class ParamType:
             cls.MISSING_TYPES.add(name)
             return None
 
-    def get_output_data(self, name: str):
-        from datatypes import OutputData
-        return OutputData.from_type(self.name, name)
-
     @classmethod
     def initialise(cls):
         if not cls.INITIALISED:

@@ -31,4 +31,4 @@ class CodeFunctionParser:
     def get_template(self) -> FunctionTemplate:
         params = [self.get_parameter(param) for param in self.sig.parameters.keys()]
         retvals = self.get_return_params()
-        return FunctionTemplate(self.function.__name__, self.function.__module__, params, retvals)
+        return FunctionTemplate(self.function.__name__, self.function.__module__, params, retvals, self.function.__doc__)

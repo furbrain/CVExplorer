@@ -1,18 +1,20 @@
 import typing
+import webbrowser
 from functools import partial
 from typing import Union, List
 
 import numpy as np
 import wx
 import wx.dataview
+from attr import validators
 
-from controls import get_control_from_type
+from controls import get_control_from_type, ControlWrapper
 from functions import Function, ParamType
 
 if typing.TYPE_CHECKING:
     from datatypes.base import ParamsInstance
     from functions import ParameterTemplate, Function
-from gui.basegui import FunctionPaneBase
+from gui.basegui import FunctionPaneBase, CVEFrame
 
 EVENTS = [
     wx.EVT_BUTTON,
@@ -22,7 +24,9 @@ EVENTS = [
     wx.EVT_FILEPICKER_CHANGED,
     wx.EVT_TEXT,
     wx.EVT_SPINCTRL,
-    wx.EVT_CHOICE
+    wx.EVT_CHOICE,
+    wx.EVT_RADIOBUTTON,
+    wx.EVT_TOGGLEBUTTON
 ]
 
 
@@ -31,17 +35,19 @@ class FunctionPane(FunctionPaneBase):
     def __init__(self, nb: wx.Notebook, func: Function):
         super().__init__(nb)
         self.func = func
-        self.results_controls = [self.results_matrix, self.results_text, self.results_bitmap]
+        self.display_controls = [self.results_matrix, self.results_text, self.results_bitmap]
+        self.radio_buttons: List[wx.RadioButton] = []
+        self.params: "ParamsInstance" = self.add_input_params(self.func.param_template)
+        self.function_name.SetLabel(self.func.name)
+        self.help_button.Bind(wx.EVT_BUTTON, self.show_function_help)
+        for result in self.func.results:
+            result.params = self.add_output_params(result.name, result.PARAMS)
         for evt in EVENTS:
             self.Bind(evt, self.on_change)
 
-        self.params: "ParamsInstance" = self.add_input_params(self.func.param_template)
-        for result in self.func.results:
-            result.params = self.add_output_params(result.name, result.PARAMS)
-
     def get_input_control(self, param: "ParameterTemplate"):
         tp = ParamType.from_name(param.type_name)
-        ctrl = get_control_from_type(self.params_pane, tp, param.default)
+        ctrl = ControlWrapper(self.params_pane, tp, param.default)
         ctrl.SetToolTip(param.description)
         return ctrl
 
@@ -65,17 +71,21 @@ class FunctionPane(FunctionPaneBase):
         return controls
 
     def add_output_params(self, name: str, params: List["ParameterTemplate"]) -> "ParamsInstance":
+        button = wx.RadioButton(self.params_pane)
+        self.results_sizer.Add(button, 1, wx.EXPAND)
+        self.radio_buttons.append(button)
+        text_ctrl = wx.TextCtrl(self.params_pane, value=name)
+        self.results_sizer.Add(text_ctrl)
         sizer = wx.FlexGridSizer(2, 0, 3)
         controls = self.instantiate_params(params)
         self.add_param_controls_to_sizer(controls, sizer)
         sizer.AddGrowableCol(1)
-        box = wx.StaticBoxSizer(wx.VERTICAL, self.params_pane, label=name)
-        box.Add(sizer, 1, wx.EXPAND)
-        self.params_sizer.Add(box, 1, wx.EXPAND)
+        self.results_sizer.AddSpacer(0)
+        self.results_sizer.Add(sizer, 1, wx.EXPAND)
         return controls
 
     def set_display(self, results: Union[wx.Bitmap, Exception, str]) -> None:
-        for c in self.results_controls:
+        for c in self.display_controls:
             c.Hide()
         if isinstance(results, wx.Bitmap):
             self.results_bitmap.SetVirtualSize(results.GetSize())
@@ -101,7 +111,9 @@ class FunctionPane(FunctionPaneBase):
     def on_change(self, event=None):
         try:
             self.call_func()
-            results = self.func.get_result(0)
+            index = [btn.GetValue() for btn in self.radio_buttons].index(True)
+            print(index)
+            results = self.func.get_result(index)
         except Exception as e:
             self.set_display(e)
             raise e
@@ -116,3 +128,13 @@ class FunctionPane(FunctionPaneBase):
     def get_code(self):
         args = {name: ctrl.GetCode() for name, ctrl in self.params.items()}
         return self.func.as_code(args)
+
+    def show_function_help(self, event):
+        if self.func.docs.startswith("file:") or self.func.docs.startswith("http"):
+            webbrowser.open(self.func.docs)
+        else:
+            # FIXME?
+            wx.MessageBox(self.func.docs)
+
+    def get_vars(self):
+        return self.func.get_vars()

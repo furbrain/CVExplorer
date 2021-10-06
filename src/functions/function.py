@@ -1,19 +1,22 @@
-from typing import Callable, Dict, List, Any, TYPE_CHECKING
+from typing import Callable, Dict, List, Any, TYPE_CHECKING, ClassVar
+
+import attr
 
 from .parameter import ParameterTemplate
 
 if TYPE_CHECKING:
     from datatypes import OutputData
 
-
+@attr.s(auto_attribs=True)
 class Function:
-    ALL: List["Function"] = []
+    ALL: ClassVar[List["Function"]] = []
+    name: str
+    func: Callable
+    param_template: List[ParameterTemplate]
+    results: List["OutputData"]
+    docs: str
 
-    def __init__(self, name: str, func: Callable, params: List[ParameterTemplate], results: List["OutputData"]):
-        self.name = name
-        self.func = func
-        self.param_template = params
-        self.results: List[OutputData] = results
+    def __attrs_post_init__(self):
         self.ALL.append(self)
 
     @classmethod
@@ -37,3 +40,6 @@ class Function:
 
     def get_result(self, index):
         return self.results[index].display()
+
+    def get_vars(self):
+        return {r.name: r.data for r in self.results}

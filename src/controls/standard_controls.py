@@ -8,7 +8,7 @@ from wx.lib.agw.floatspin import FloatSpin
 class IntControl(wx.SpinCtrl):
     def __init__(self, *args, **kw):
         if "min" not in kw:
-            kw["min"] = -1
+            kw["min"] = -(10**10)
         if "max" not in kw:
             kw["max"] = 10 ** 10
         super().__init__(*args, **kw)

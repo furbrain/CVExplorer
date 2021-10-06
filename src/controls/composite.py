@@ -17,9 +17,9 @@ class CompositeControl(wx.Panel):
         self.sizer = wx.FlexGridSizer(len(self.FIELDS), 3, 3)
         self.controls: Dict[str, ParamControl] = {}
         for field in self.FIELDS:
-            self.sizer.Add(wx.StaticText(self, label=field.name), )
+            self.sizer.Add(wx.StaticText(self, label=field.name), 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER_VERTICAL, 3)
             self.controls[field.name] = ControlWrapper(self, field.get_type())
-            self.sizer.Add(self.controls[field.name])
+            self.sizer.Add(self.controls[field.name], 1 , wx.EXPAND | wx.ALL | wx.ALIGN_CENTER_VERTICAL, 3)
         self.SetSizer(self.sizer)
 
     def SetValue(self, values):

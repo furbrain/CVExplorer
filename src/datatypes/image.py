@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Union
 
 import cv2
 import numpy as np
@@ -6,7 +6,6 @@ import wx
 
 from functions import ParameterTemplate
 from controls import ParamsInstance
-from .base import OutputData
 
 
 class ArrayDisplayer:
@@ -24,7 +23,7 @@ class ArrayDisplayer:
 class ImageDisplayer(ArrayDisplayer):
     PARAMS = [
         ParameterTemplate("AutoExpose", "bool", "Equalise contrast", default=False),
-        ParameterTemplate("Brightness", "bool", "Adjust brightness, default=0")
+        ParameterTemplate("Brightness", "int", "Adjust brightness, default=0")
     ]
 
     @staticmethod
@@ -66,36 +65,3 @@ class MatrixDisplayer(ArrayDisplayer):
     @staticmethod
     def display(data: np.ndarray, params: ParamsInstance) -> Union[wx.Bitmap, np.ndarray]:
         return data
-
-
-class ImageData(OutputData):
-    HANDLED_CLASSES = ["Array"]
-    IMAGE_COUNTER = 1
-
-    ARRAYDISPLAYERS = [
-        ImageDisplayer,
-        MatrixDisplayer
-    ]
-
-    # set our params to be all of the params for the various array displayers
-    PARAMS = [p for displayer in ARRAYDISPLAYERS for p in displayer.PARAMS]
-
-    def __init__(self, name: str):
-        name = f"{name}{self.IMAGE_COUNTER}"
-        ImageData.IMAGE_COUNTER += 1
-        super().__init__(name)
-        self.data: Optional[np.ndarray] = None
-        self.last_displayer: Optional[ArrayDisplayer] = None
-
-    def display(self) -> Union[wx.Bitmap, np.array]:
-        for displayer in self.ARRAYDISPLAYERS:
-            if displayer.can_handle(self.data):
-                if displayer != self.last_displayer:
-                    for param in self.params.values():
-                        param.Hide()
-                    for param_name in displayer.PARAMS:
-                        self.params[param_name.name].Show()
-                    self.last_displayer = displayer
-                return displayer.display(self.data, self.params)
-        else:
-            raise ValueError(f"Unknown array format {self.data.shape}")

@@ -25,6 +25,3 @@ class ParameterTemplate:
     def get_type(self):
         return ParamType.from_name(self.type_name)
 
-    def get_output_data(self):
-        return self.get_type().get_output_data(self.name)
-

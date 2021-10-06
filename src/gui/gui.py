@@ -1,23 +1,20 @@
 import os.path
 from functools import partial
-from typing import List
+from typing import List, Any, Dict
 
-import cv2
 import wx
 
 from common import get_config_filename
-from datatypes import ImageData
-from functions import Function, ParameterTemplate, Module
+from functions import Module
 from functions.enum import Enum
 from functions.template import FunctionTemplate
-from gui.basegui import CodeDialog
+from .basegui import CodeDialog, CVEFrame
 from parser.codeparser import CodeParser
 from parser.moduleparser import ModuleParser
-from . import basegui
 from .pane import FunctionPane
 
 
-class CVEFrame(basegui.CVEFrame):
+class MainFrame(CVEFrame):
 
     def get_all_panes(self) -> List[FunctionPane]:
         return[self.notebook.GetPage(i) for i in range(self.notebook.PageCount)]
@@ -36,10 +33,8 @@ class CVEFrame(basegui.CVEFrame):
             if fd.ShowModal() != wx.ID_OK:
                 return
         path = fd.GetPath()
-        params: List[ParameterTemplate] = [
-            ParameterTemplate("filename", "str", "Name of file to be loaded", default=path)]
-        results = [ImageData("image")]
-        func = Function("Load image", cv2.imread, params, results)
+        func = FunctionTemplate.find_one("imread").create_function()
+        func.param_template[0].default = path
         self.add_pane_from_func(func)
 
     def add_pane_from_func(self, func):
@@ -57,7 +52,7 @@ class CVEFrame(basegui.CVEFrame):
             self.Bind(wx.EVT_MENU, partial(self.add_func, func), id=item.GetId())
         for child in module.children:
             if child.count() > 0:
-                menu.AppendMenu(wx.ID_ANY, child.name, self.get_menu_from_module(child))
+                menu.Append(wx.ID_ANY, child.name, self.get_menu_from_module(child))
         return menu
 
     def add_menu_items(self):
@@ -91,11 +86,22 @@ class CVEFrame(basegui.CVEFrame):
     def exit(self, event):
         self.Destroy()
 
+    def get_vars(self, window: wx.Window) -> Dict[str, Any]:
+        local_vars: Dict[str, Any] = {}
+        index = 0
+        while index < self.notebook.GetPageCount():
+            pane: FunctionPane = self.notebook.GetPage(index)
+            if pane.FindWindowById(window.GetId(), pane):
+                return local_vars
+            else:
+                local_vars.update(pane.get_vars())
+            index += 1
+        raise ValueError("Could not find window as a child of notebook")
 
 class CVExplorer(wx.App):
     def OnInit(self):
         # noinspection PyAttributeOutsideInit
-        self.frame = CVEFrame(None, wx.ID_ANY, "")
+        self.frame = MainFrame(None, wx.ID_ANY, "")
         self.frame.add_menu_items()
         self.SetTopWindow(self.frame)
         self.frame.Show()

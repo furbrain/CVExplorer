@@ -1,5 +1,6 @@
 from typing import Any
 
+import cv2
 import wx
 
 from functions import ParamType
@@ -8,10 +9,10 @@ from gui.basegui import WrapperBase
 
 # noinspection PyPep8Naming
 class ControlWrapper(WrapperBase):
-    def __init__(self, parent: wx.Window, tp: ParamType):
+    def __init__(self, parent: wx.Window, tp: ParamType, default: Any = None):
         from .control_factory import get_control_from_type
         super().__init__(parent, wx.ID_ANY)
-        self.ctrl = get_control_from_type(self, tp)
+        self.ctrl = get_control_from_type(self, tp, default)
         self.ctrl.Reparent(self)
         self.sizer.Add(self.ctrl, 1, wx.ALL, 3)
         self.sizer.Fit(self)
@@ -26,14 +27,18 @@ class ControlWrapper(WrapperBase):
             self.ctrl.Show()
         self.sizer.Fit(self)
         self.Layout()
+        event.Skip()
 
     def SetValue(self, value: Any) -> None:
         self.ctrl.SetValue(value)
 
     def GetValue(self) -> Any:
         if self.toggle_code.GetValue():
-            from functions import Function
-            return eval(self.code.GetValue(), Function.get_all_vars())
+            from gui.gui import MainFrame
+            frame: MainFrame = self.GetTopLevelParent()
+            locals = {**frame.get_vars(self), "cv2": cv2}
+            print(locals)
+            return eval(self.code.GetValue(), locals)
         else:
             return self.ctrl.GetValue()
 
