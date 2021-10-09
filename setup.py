@@ -9,6 +9,8 @@ from os.path import basename, dirname, join, splitext
 
 from setuptools import find_packages, setup
 
+with open("requirements.txt","r") as f:
+    requirements = f.readlines()
 
 def read(*names, **kwargs):
     """Read description files."""
@@ -64,8 +66,7 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
         ],
     python_requires='>=3.6, <3.9',
-    install_requires=[
-        ],
+    install_requires=requirements,
     extras_require={
         },
     setup_requires=[
