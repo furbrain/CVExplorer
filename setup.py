@@ -9,8 +9,6 @@ from os.path import basename, dirname, join, splitext
 
 from setuptools import find_packages, setup
 
-with open("requirements.txt","r") as f:
-    requirements = f.readlines()
 
 def read(*names, **kwargs):
     """Read description files."""
@@ -23,6 +21,8 @@ long_description = '{}\n{}'.format(
     read('README.rst'),
     read(join('docs', 'CHANGELOG.rst')),
     )
+
+requirements = read("requirements.txt").splitlines()
 
 setup(
     name='cvexplorer',
