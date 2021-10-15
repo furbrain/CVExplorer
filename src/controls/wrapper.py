@@ -1,15 +1,16 @@
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import cv2
 import wx
 
-from functions import ParamType
 from gui.basegui import WrapperBase
+if TYPE_CHECKING:
+    from functions import ParamType
 
 
 # noinspection PyPep8Naming
 class ControlWrapper(WrapperBase):
-    def __init__(self, parent: wx.Window, tp: ParamType, default: Any = None):
+    def __init__(self, parent: wx.Window, tp: "ParamType", default: Any = None):
         from .control_factory import get_control_from_type
         super().__init__(parent, wx.ID_ANY)
         self.ctrl = get_control_from_type(self, tp, default)
@@ -36,9 +37,8 @@ class ControlWrapper(WrapperBase):
         if self.toggle_code.GetValue():
             from gui.gui import MainFrame
             frame: MainFrame = self.GetTopLevelParent()
-            locals = {**frame.get_vars(self), "cv2": cv2}
-            print(locals)
-            return eval(self.code.GetValue(), locals)
+            env = {**frame.get_vars(self), "cv2": cv2}
+            return eval(self.code.GetValue(), env)
         else:
             return self.ctrl.GetValue()
 

@@ -37,22 +37,26 @@ class TestFunction(TestCase):
         self.pane: Mock = mock.create_autospec(FunctionPane)
 
     def createFixtures(self):
-        self.f1 = Function("Function1", Mock(return_value=(0, 2)), [
-            ParameterTemplate("filename", str, "Filename to load", "filename.jpg"),
-            ParameterTemplate("mode", int, default=1)
-        ], [
+        self.f1 = Function("Function1",
+                           Mock(return_value=(0, 2)), [
+                               ParameterTemplate("filename", str, "Filename to load", "filename.jpg"),
+                               ParameterTemplate("mode", int, default=1)
+                           ], [
                                # results
                                MockResult("image1", 0),
                                MockResult("result", 2)
-                           ])
-        self.f2 = Function("Function2", Mock(), [
-            ParameterTemplate("filename", str, "Filename to load", ""),
-            ParameterTemplate("mode", int)
-        ], [
+                           ],
+                           docs="Document function 1")
+        self.f2 = Function("Function2",
+                           Mock(), [
+                               ParameterTemplate("filename", str, "Filename to load", ""),
+                               ParameterTemplate("mode", int)
+                           ], [
                                # results
                                MockResult("image2", 1),
                                MockResult("result2", 3)
-                           ])
+                           ],
+                           docs="Function 2 docs")
         self.function_list.append(self.f1)
         self.function_list.append(self.f2)
 

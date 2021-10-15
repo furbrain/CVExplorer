@@ -33,6 +33,7 @@ EVENTS = [
 # noinspection PyUnusedLocal
 class FunctionPane(FunctionPaneBase):
     def __init__(self, nb: wx.Notebook, func: Function):
+        from functions import ParameterTemplate
         super().__init__(nb)
         self.func = func
         self.display_controls = [self.results_matrix, self.results_text, self.results_bitmap]
@@ -41,7 +42,9 @@ class FunctionPane(FunctionPaneBase):
         self.function_name.SetLabel(self.func.name)
         self.help_button.Bind(wx.EVT_BUTTON, self.show_function_help)
         for result in self.func.results:
-            result.params = self.add_output_params(result.name, result.PARAMS)
+            result.params = self.add_output_params(result.name,
+                                                   [ParameterTemplate(*param) for param in result.PARAMS])
+            print(result.params)
         for evt in EVENTS:
             self.Bind(evt, self.on_change)
 

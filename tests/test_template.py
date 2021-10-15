@@ -32,9 +32,10 @@ class TestFunctionTemplate(TestCase):
             ],
             outputs=[
                 ParameterTemplate("dst", "OutputArray")
-            ]
+            ],
+            docs="FunctionTemplate docs"
         )
         function = self.func_template.create_function()
         self.assertEqual(cv2.pyrDown, function.func)
-        self.assertListEqual(["dst1"], [r.name for r in function.results])
+        self.assertListEqual(["dst"], [r.name for r in function.results])
 

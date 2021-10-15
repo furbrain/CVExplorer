@@ -1,10 +1,7 @@
-from typing import ClassVar, Dict, Any
+from typing import ClassVar, Dict, Any, TYPE_CHECKING
 
 import wx
 
-from functions import ParamType
-from functions.builtintype import BuiltInType
-from functions.enum import Enum
 from .array_control import ArrayControl
 from .control_type import ParamControl
 from .enum_control import EnumControl
@@ -13,6 +10,9 @@ from .scalar_control import ScalarControl
 from .size_control import SizeControl
 from .standard_controls import IntControl, FloatControl, BoolControl, TextControl
 from .term_criteria_control import TermCriteriaControl
+
+if TYPE_CHECKING:
+    from functions import ParamType
 
 BUILT_INS: ClassVar[Dict[str, ParamControl]] = {
     "int": IntControl,
@@ -28,7 +28,8 @@ BUILT_INS: ClassVar[Dict[str, ParamControl]] = {
 }
 
 
-def get_control_from_type(parent: wx.Window, tp: ParamType, default: Any = None) -> ParamControl:
+def get_control_from_type(parent: wx.Window, tp: "ParamType", default: Any = None) -> "ParamControl":
+    from functions import Enum, BuiltInType
     if isinstance(tp, Enum):
         ctrl = EnumControl(parent, wx.ID_ANY, tp)
     elif isinstance(tp, BuiltInType):

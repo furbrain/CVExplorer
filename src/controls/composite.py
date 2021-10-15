@@ -1,10 +1,11 @@
-from typing import List, Dict, Type, ClassVar
+from typing import List, Dict, Type, ClassVar, TYPE_CHECKING
 
 import wx
 
-from functions import ParameterTemplate
 from .wrapper import ControlWrapper
 from .control_type import ParamControl
+if TYPE_CHECKING:
+    from functions import ParameterTemplate
 
 
 # noinspection PyPep8Naming

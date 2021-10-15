@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 import wx
 
-from functions import ParameterTemplate
 from controls import ParamsInstance
 
 
@@ -21,9 +20,9 @@ class ArrayDisplayer:
 
 
 class ImageDisplayer(ArrayDisplayer):
-    PARAMS = [
-        ParameterTemplate("AutoExpose", "bool", "Equalise contrast", default=False),
-        ParameterTemplate("Brightness", "int", "Adjust brightness, default=0")
+    PARAMS = [ # these are arguments to create a list of parameter templates
+        ("AutoExpose", "bool", "Equalise contrast", False),
+        ("Brightness", "int", "Adjust brightness", 0)
     ]
 
     @staticmethod

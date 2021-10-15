@@ -38,7 +38,7 @@ class OutputData:
                     for param in self.params.values():
                         param.Hide()
                     for param_name in displayer.PARAMS:
-                        self.params[param_name.name].Show()
+                        self.params[param_name[0]].Show()
                     self.last_displayer = displayer
                 return displayer.display(self.data, self.params)
         else:
