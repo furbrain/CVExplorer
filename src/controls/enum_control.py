@@ -33,6 +33,7 @@ class EnumControl(wx.Choice):
         else:
             self.SetStringSelection(value)
 
+    # noinspection PyPep8Naming
     def SetToolTip(self, text: str):
         if text:
             text = f"{text}\n\n{self.tooltip_contents}"

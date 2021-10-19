@@ -1,4 +1,8 @@
-from typing import Protocol, Any, Dict, Callable
+from typing import Any, Dict, Callable
+try:
+    from typing import Protocol
+except ImportError:
+    from typing_extensions import Protocol
 
 import wx
 

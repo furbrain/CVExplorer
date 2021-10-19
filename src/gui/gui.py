@@ -17,7 +17,7 @@ from .pane import FunctionPane
 class MainFrame(CVEFrame):
 
     def get_all_panes(self) -> List[FunctionPane]:
-        return[self.notebook.GetPage(i) for i in range(self.notebook.PageCount)]
+        return [self.notebook.GetPage(i) for i in range(self.notebook.PageCount)]
 
     def generate_code(self, event):
         text = '\n'.join(pane.get_code() for pane in self.get_all_panes())
@@ -98,7 +98,9 @@ class MainFrame(CVEFrame):
             index += 1
         raise ValueError("Could not find window as a child of notebook")
 
+
 class CVExplorer(wx.App):
+    # noinspection PyPep8Naming
     def OnInit(self):
         # noinspection PyAttributeOutsideInit
         self.frame = MainFrame(None, wx.ID_ANY, "")

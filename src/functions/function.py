@@ -7,6 +7,7 @@ from .parameter import ParameterTemplate
 if TYPE_CHECKING:
     from datatypes import OutputData
 
+
 @attr.s(auto_attribs=True)
 class Function:
     ALL: ClassVar[List["Function"]] = []

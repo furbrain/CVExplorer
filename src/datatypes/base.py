@@ -1,14 +1,14 @@
 import typing
-from typing import Union, Type, Any, ClassVar, List, Optional
-from controls import ParamsInstance
+from typing import Union, Any, Optional
 
 import numpy as np
 import wx
 
+from controls import ParamsInstance
 from .image import ImageDisplayer, MatrixDisplayer, ArrayDisplayer
 
 if typing.TYPE_CHECKING:
-    from functions import ParameterTemplate
+    pass
 
 
 class BaseParameter:

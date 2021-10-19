@@ -16,7 +16,8 @@ class TestFunctionParser(TestCase):
             cls.pyrDown_element = f.read()
 
     def setUp(self) -> None:
-        self.function_parser = FunctionParser(html.fromstring(self.pyrDown_element, base_url=FIXTURES_FILTER_HTML), url=FIXTURES_FILTER_HTML)
+        self.function_parser = FunctionParser(html.fromstring(self.pyrDown_element, base_url=FIXTURES_FILTER_HTML),
+                                              url=FIXTURES_FILTER_HTML)
 
     def test_parse_signature_simple(self):
         test = "result = cv.function(a)"

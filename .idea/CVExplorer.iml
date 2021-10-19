@@ -6,6 +6,9 @@
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/tests/fixtures" />
       <excludeFolder url="file://$MODULE_DIR$/src/htmlcov" />
+      <excludeFolder url="file://$MODULE_DIR$/htmlcov" />
+      <excludeFolder url="file://$MODULE_DIR$/src/cvexplorer.egg-info" />
+      <excludePattern pattern="coverage.xml" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (CVExplorer)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

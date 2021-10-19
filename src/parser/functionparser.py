@@ -112,7 +112,7 @@ class FunctionParser:
             return None
         try:
             inputs = [self.get_parameter_template(name) for name in input_vars]
-            outputs = [self.get_parameter_template(name) for name in output_vars if name is not "None"]
+            outputs = [self.get_parameter_template(name) for name in output_vars if name != "None"]
         except (FunctionParserError, ParamTypeError) as e:
             print(f"Error parsing function {name}: {e}")
             return None

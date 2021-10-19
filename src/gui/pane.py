@@ -6,15 +6,14 @@ from typing import Union, List
 import numpy as np
 import wx
 import wx.dataview
-from attr import validators
 
-from controls import get_control_from_type, ControlWrapper
+from controls import ControlWrapper
 from functions import Function, ParamType
 
 if typing.TYPE_CHECKING:
     from datatypes.base import ParamsInstance
     from functions import ParameterTemplate, Function
-from gui.basegui import FunctionPaneBase, CVEFrame
+from gui.basegui import FunctionPaneBase
 
 EVENTS = [
     wx.EVT_BUTTON,

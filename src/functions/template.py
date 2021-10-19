@@ -31,12 +31,12 @@ class FunctionTemplate:
                         self.docs)
 
     @classmethod
-    def find(cls, text:str) -> List["FunctionTemplate"]:
+    def find(cls, text: str) -> List["FunctionTemplate"]:
         return [x for x in cls.ALL_TEMPLATES if text in x.name]
 
     @classmethod
-    def find_one(cls, text:str) -> "FunctionTemplate":
+    def find_one(cls, text: str) -> "FunctionTemplate":
         candidates = cls.find(text)
-        if len(candidates)==0:
+        if len(candidates) == 0:
             raise ValueError(f"FunctionTemplate instance for {text} not found")
         return candidates[0]

@@ -20,7 +20,7 @@ class ArrayDisplayer:
 
 
 class ImageDisplayer(ArrayDisplayer):
-    PARAMS = [ # these are arguments to create a list of parameter templates
+    PARAMS = [  # these are arguments to create a list of parameter templates
         ("AutoExpose", "bool", "Equalise contrast", False),
         ("Brightness", "int", "Adjust brightness", 0)
     ]

@@ -1,9 +1,11 @@
 import inspect
 import types
 from typing import List
-
+try:
+    from typing import get_args
+except ImportError:
+    from typing_extensions import get_args
 import docstring_parser
-import typing
 
 from functions import FunctionTemplate, ParameterTemplate
 
@@ -17,7 +19,7 @@ class CodeFunctionParser:
     def get_return_params(self) -> List[ParameterTemplate]:
         return_type = self.sig.return_annotation
         desc = self.docstring.returns.description
-        return_types = typing.get_args(return_type)
+        return_types = get_args(return_type)
         if return_types:
             return [ParameterTemplate(f"retval{x}", tp, desc) for x, tp in enumerate(return_types)]
         else:
@@ -31,4 +33,8 @@ class CodeFunctionParser:
     def get_template(self) -> FunctionTemplate:
         params = [self.get_parameter(param) for param in self.sig.parameters.keys()]
         retvals = self.get_return_params()
-        return FunctionTemplate(self.function.__name__, self.function.__module__, params, retvals, self.function.__doc__)
+        return FunctionTemplate(self.function.__name__,
+                                self.function.__module__,
+                                params,
+                                retvals,
+                                self.function.__doc__)
