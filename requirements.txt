@@ -1,4 +1,6 @@
-wxPython>=4.1.1
+-f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-20.04
+wxPython==4.1.0; sys_platform == 'linux'
+wxPython==4.1.0; sys_platform != 'linux'
 setuptools>=52.0.0
 numpy>=1.19.1
 opencv-python>=4.5.3.56
