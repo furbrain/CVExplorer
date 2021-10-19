@@ -22,7 +22,6 @@ long_description = '{}\n{}'.format(
     read(join('docs', 'CHANGELOG.rst')),
     )
 
-requirements = read("requirements.txt").splitlines()
 
 setup(
     name='cvexplorer',
@@ -66,7 +65,8 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
         ],
     python_requires='>=3.6, <3.9',
-    install_requires=requirements,
+    install_requires=[
+        ],
     extras_require={
         },
     setup_requires=[
