@@ -64,7 +64,7 @@ setup(
         'project-skeleton', 'sample-project',
         # eg: 'keyword1', 'keyword2', 'keyword3',
         ],
-    python_requires='>=3.6, <3.9',
+    python_requires='>=3.6, <=3.10',
     install_requires=[
         ],
     extras_require={
