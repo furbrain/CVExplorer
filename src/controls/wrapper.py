@@ -2,6 +2,7 @@ from typing import Any, TYPE_CHECKING
 
 import cv2
 import wx
+import numpy as np
 
 from gui.basegui import WrapperBase
 if TYPE_CHECKING:
@@ -37,7 +38,7 @@ class ControlWrapper(WrapperBase):
         if self.toggle_code.GetValue():
             from gui.gui import MainFrame
             frame: MainFrame = self.GetTopLevelParent()
-            env = {**frame.get_vars(self), "cv2": cv2}
+            env = {**frame.get_vars(self), "cv2": cv2, "np": np}
             return eval(self.code.GetValue(), env)
         else:
             return self.ctrl.GetValue()

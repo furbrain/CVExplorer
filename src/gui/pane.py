@@ -11,8 +11,9 @@ from controls import ControlWrapper
 from functions import Function, ParamType
 
 if typing.TYPE_CHECKING:
-    from datatypes.base import ParamsInstance
+    from datatypes.base import ParamsInstance, OutputData
     from functions import ParameterTemplate, Function
+
 from gui.basegui import FunctionPaneBase
 
 EVENTS = [
@@ -41,7 +42,7 @@ class FunctionPane(FunctionPaneBase):
         self.function_name.SetLabel(self.func.name)
         self.help_button.Bind(wx.EVT_BUTTON, self.show_function_help)
         for result in self.func.results:
-            result.params = self.add_output_params(result.name,
+            result.params = self.add_output_params(result,
                                                    [ParameterTemplate(*param) for param in result.PARAMS])
             print(result.params)
         for evt in EVENTS:
@@ -72,11 +73,12 @@ class FunctionPane(FunctionPaneBase):
         self.add_param_controls_to_sizer(controls, self.input_param_sizer)
         return controls
 
-    def add_output_params(self, name: str, params: List["ParameterTemplate"]) -> "ParamsInstance":
+    def add_output_params(self, result: "OutputData", params: List["ParameterTemplate"]) -> "ParamsInstance":
         button = wx.RadioButton(self.params_pane)
         self.results_sizer.Add(button, 1, wx.EXPAND)
         self.radio_buttons.append(button)
-        text_ctrl = wx.TextCtrl(self.params_pane, value=name)
+        text_ctrl = wx.TextCtrl(self.params_pane, value=result.name)
+        text_ctrl.Bind(wx.EVT_TEXT, result.setname)
         self.results_sizer.Add(text_ctrl)
         sizer = wx.FlexGridSizer(2, 0, 3)
         controls = self.instantiate_params(params)

@@ -43,3 +43,6 @@ class OutputData:
                 return displayer.display(self.data, self.params)
         else:
             raise ValueError(f"Unknown array format {self.data.shape}")
+
+    def setname(self, event: wx.CommandEvent):
+        self.name = event.GetString()
